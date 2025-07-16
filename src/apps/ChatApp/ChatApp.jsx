@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = 'http://localhost:4000';
+// Use environment variable for backend URL, fallback to localhost for development
+const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
 const ROOM_ID = 1; // Example room, adjust as needed
 const USER_ID = Math.floor(Math.random() * 1000000); // Temporary user id for demo
 
@@ -21,10 +22,11 @@ function ChatApp() {
     socket.emit('joinRoom', ROOM_ID);
     socket.emit('userOnline', USER_ID);
 
-    // Fetch chat history
-    fetch(`${SOCKET_URL.replace('4000', '5173')}/api/rooms/${ROOM_ID}/messages`)
+    // Fetch chat history - use the same backend URL for API calls
+    fetch(`${SOCKET_URL}/api/rooms/${ROOM_ID}/messages`)
       .then(res => res.json())
-      .then(data => setMessages(data));
+      .then(data => setMessages(data))
+      .catch(err => console.error('Failed to fetch messages:', err));
 
     // Listen for new messages
     socket.on('chatMessage', (msg) => {
