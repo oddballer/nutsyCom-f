@@ -1,9 +1,8 @@
 import React from 'react';
-import { ThemeProvider, StyleSheetManager } from 'styled-components';
+import { ThemeProvider } from 'styled-components';
 import original from 'react95/dist/themes/original';
 import { styleReset } from 'react95';
 import { createGlobalStyle } from 'styled-components';
-import isPropValid from '@emotion/is-prop-valid';
 import DesktopIcon from './Icon';
 
 const GlobalStyles = createGlobalStyle`
@@ -14,30 +13,34 @@ const GlobalStyles = createGlobalStyle`
 `;
 
 const icons = [
-  { id: 'chat', iconName: 'Mail', label: 'Chat' },
+  { 
+    id: 'chat', 
+    iconName: 'user_world-1.png', 
+    label: 'Chat',
+    isImage: true // Flag to indicate this is an image file
+  },
   // Add more icons here
 ];
 
 function Desktop({ windows, onIconDoubleClick, children }) {
   return (
-    <StyleSheetManager shouldForwardProp={isPropValid}>
-      <ThemeProvider theme={original}>
-        <GlobalStyles />
-        <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
-          <div style={{ position: 'absolute', left: 40, top: 40, display: 'flex', flexDirection: 'column', gap: 32 }}>
-            {icons.map(icon => (
-              <DesktopIcon
-                key={icon.id}
-                iconName={icon.iconName}
-                label={icon.label}
-                onDoubleClick={() => onIconDoubleClick(icon.id)}
-              />
-            ))}
-          </div>
-          {children}
+    <ThemeProvider theme={original}>
+      <GlobalStyles />
+      <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', left: 40, top: 40, display: 'flex', flexDirection: 'column', gap: 32 }}>
+          {icons.map(icon => (
+            <DesktopIcon
+              key={icon.id}
+              iconName={icon.iconName}
+              label={icon.label}
+              isImage={icon.isImage}
+              onDoubleClick={() => onIconDoubleClick(icon.id)}
+            />
+          ))}
         </div>
-      </ThemeProvider>
-    </StyleSheetManager>
+        {children}
+      </div>
+    </ThemeProvider>
   );
 }
 
