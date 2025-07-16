@@ -61,7 +61,12 @@ function WindowApp({
             <Button size="sm" onClick={onClose}>X</Button>
           </div>
         </WindowHeader>
-        <WindowContent>
+        <WindowContent style={{ 
+          height: 'calc(100% - 40px)', // Subtract header height
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column'
+        }}>
           {children}
         </WindowContent>
       </Window>

@@ -124,8 +124,7 @@ function ChatApp() {
   return (
     <div style={{ 
       display: 'flex', 
-      height: '100%', 
-      maxHeight: '100%', 
+      flex: 1,
       overflow: 'hidden',
       width: '100%'
     }}>
@@ -165,7 +164,7 @@ function ChatApp() {
         display: 'flex', 
         flexDirection: 'column',
         overflow: 'hidden',
-        minWidth: 0, // Allow flex item to shrink below content size
+        minWidth: 0,
         minHeight: 0
       }}>
         <div style={{ 
@@ -202,7 +201,7 @@ function ChatApp() {
             onChange={e => setInput(e.target.value)}
             style={{ 
               flex: 1,
-              minWidth: 0 // Allow input to shrink
+              minWidth: 0
             }}
             placeholder="Type a message..."
           />
