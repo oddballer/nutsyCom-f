@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, ToolbarButton, Text } from 'react95';
+import { AppBar, Toolbar, Button, Text } from 'react95';
 
 function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
   const formatTime = () => {
@@ -16,7 +16,7 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
       <Toolbar style={{ justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', gap: 4 }}>
           {openWindows.map(window => (
-            <ToolbarButton
+            <Button
               key={window.id}
               onClick={() => onWindowClick(window.id)}
               style={{ 
@@ -27,7 +27,7 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
               }}
             >
               <span>{window.title}</span>
-            </ToolbarButton>
+            </Button>
           ))}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
