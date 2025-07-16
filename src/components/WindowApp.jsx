@@ -53,8 +53,8 @@ function WindowApp({
         topLeft: { cursor: 'nw-resize' },
       }}
     >
-      <Window style={{ width: '100%', height: '100%' }}>
-        <WindowHeader className="window-header" style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <Window style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <WindowHeader className="window-header" style={{ display: 'flex', justifyContent: 'space-between', flexShrink: 0 }}>
           <span>{title}</span>
           <div>
             <Button size="sm" onClick={onMinimize}>_</Button>
@@ -62,11 +62,12 @@ function WindowApp({
           </div>
         </WindowHeader>
         <WindowContent style={{ 
-          height: 'calc(100% - 32px)', // More accurate header height
+          flex: 1,
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
-          padding: '8px'
+          padding: '8px',
+          minHeight: 0
         }}>
           {children}
         </WindowContent>
