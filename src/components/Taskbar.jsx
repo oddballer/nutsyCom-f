@@ -18,7 +18,7 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
       left: 0, 
       right: 0, 
       zIndex: 1000,
-      height: 28,
+      height: 36,
       backgroundColor: '#c0c0c0',
       borderTop: '2px solid #ffffff',
       borderLeft: '2px solid #ffffff',
@@ -36,7 +36,7 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
           {/* Start Button */}
           <Button
             style={{ 
-              height: 20,
+              height: 28,
               display: 'flex',
               alignItems: 'center',
               gap: 4,
@@ -49,12 +49,12 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
               src="/walnut.png" 
               alt="Start"
               style={{ 
-                width: 16, 
-                height: 16,
+                width: 18, 
+                height: 18,
                 objectFit: 'contain'
               }}
             />
-            <span style={{ fontSize: '11px', fontWeight: 'bold' }}>Start</span>
+            <span style={{ fontSize: '12px', fontWeight: 'bold' }}>Start</span>
           </Button>
           
           {/* Window Buttons */}
@@ -64,8 +64,8 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
               onClick={() => onWindowClick(window.id)}
               style={{ 
                 minWidth: 120,
-                height: 20,
-                fontSize: '11px'
+                height: 28,
+                fontSize: '12px'
               }}
             >
               {window.title}
@@ -73,7 +73,7 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
           ))}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: '11px', color: '#000000' }}>
+          <span style={{ fontSize: '12px', color: '#000000' }}>
             {formatTime()}
           </span>
         </div>
