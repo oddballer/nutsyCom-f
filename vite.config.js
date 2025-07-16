@@ -10,4 +10,6 @@ export default defineConfig({
   server: {
     sourcemap: false,
   },
+  // Ensure proper base URL handling for production
+  base: '/',
 })

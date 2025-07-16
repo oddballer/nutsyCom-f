@@ -6,17 +6,44 @@ const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
 const ROOM_ID = 1; // Example room, adjust as needed
 const USER_ID = Math.floor(Math.random() * 1000000); // Temporary user id for demo
 
+// Debug logging
+console.log('Environment:', import.meta.env.MODE);
+console.log('Backend URL:', SOCKET_URL);
+console.log('VITE_BACKEND_URL env var:', import.meta.env.VITE_BACKEND_URL);
+
 function ChatApp() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const [connectionStatus, setConnectionStatus] = useState('Connecting...');
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
+    console.log('Attempting to connect to:', SOCKET_URL);
+    
     // Connect to socket.io server
-    const socket = io(SOCKET_URL);
+    const socket = io(SOCKET_URL, {
+      transports: ['websocket', 'polling'],
+      timeout: 10000,
+    });
     socketRef.current = socket;
+
+    // Connection event handlers
+    socket.on('connect', () => {
+      console.log('Connected to backend');
+      setConnectionStatus('Connected');
+    });
+
+    socket.on('connect_error', (error) => {
+      console.error('Connection error:', error);
+      setConnectionStatus('Connection failed');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from backend');
+      setConnectionStatus('Disconnected');
+    });
 
     // Join room
     socket.emit('joinRoom', ROOM_ID);
@@ -24,9 +51,18 @@ function ChatApp() {
 
     // Fetch chat history - use the same backend URL for API calls
     fetch(`${SOCKET_URL}/api/rooms/${ROOM_ID}/messages`)
-      .then(res => res.json())
-      .then(data => setMessages(data))
-      .catch(err => console.error('Failed to fetch messages:', err));
+      .then(res => {
+        console.log('API response status:', res.status);
+        return res.json();
+      })
+      .then(data => {
+        console.log('Fetched messages:', data);
+        setMessages(data);
+      })
+      .catch(err => {
+        console.error('Failed to fetch messages:', err);
+        setConnectionStatus('API Error');
+      });
 
     // Listen for new messages
     socket.on('chatMessage', (msg) => {
@@ -63,6 +99,9 @@ function ChatApp() {
       {/* Online users sidebar */}
       <div style={{ width: 140, background: '#f0f0f0', borderRight: '1px solid #ccc', padding: 8 }}>
         <b>Online Users</b>
+        <div style={{ fontSize: '12px', color: 'gray', marginBottom: 8 }}>
+          Status: {connectionStatus}
+        </div>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
           {onlineUsers.map(uid => (
             <li key={uid} style={{ color: uid === USER_ID ? 'blue' : 'black', fontWeight: uid === USER_ID ? 'bold' : 'normal' }}>
