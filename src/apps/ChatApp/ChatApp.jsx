@@ -122,16 +122,24 @@ function ChatApp() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100%', maxHeight: '100%', overflow: 'hidden' }}>
+    <div style={{ 
+      display: 'flex', 
+      height: '100%', 
+      maxHeight: '100%', 
+      overflow: 'hidden',
+      width: '100%'
+    }}>
       {/* Online users sidebar */}
       <div style={{ 
         width: 140, 
+        minWidth: 140,
         background: '#f0f0f0', 
         borderRight: '1px solid #ccc', 
         padding: 8,
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        flexShrink: 0
       }}>
         <b>Online Users</b>
         <div style={{ fontSize: '12px', color: 'gray', marginBottom: 8 }}>
@@ -157,7 +165,8 @@ function ChatApp() {
         display: 'flex', 
         flexDirection: 'column',
         overflow: 'hidden',
-        minHeight: 0 // Important for flex child to shrink
+        minWidth: 0, // Allow flex item to shrink below content size
+        minHeight: 0
       }}>
         <div style={{ 
           flex: 1, 
@@ -166,10 +175,16 @@ function ChatApp() {
           background: '#fff', 
           padding: 8, 
           border: '1px solid #ccc',
-          minHeight: 0 // Important for flex child to shrink
+          minHeight: 0,
+          wordWrap: 'break-word',
+          overflowWrap: 'break-word'
         }}>
           {messages.map((msg, idx) => (
-            <div key={idx} style={{ marginBottom: 4 }}>
+            <div key={idx} style={{ 
+              marginBottom: 4,
+              wordWrap: 'break-word',
+              overflowWrap: 'break-word'
+            }}>
               <b>{msg.username || `User ${msg.user_id || msg.userId}`}:</b> {msg.content}
             </div>
           ))}
@@ -178,16 +193,25 @@ function ChatApp() {
         <form onSubmit={sendMessage} style={{ 
           display: 'flex', 
           gap: 8,
-          flexShrink: 0 // Prevent form from shrinking
+          flexShrink: 0,
+          minHeight: 40
         }}>
           <input
             type="text"
             value={input}
             onChange={e => setInput(e.target.value)}
-            style={{ flex: 1 }}
+            style={{ 
+              flex: 1,
+              minWidth: 0 // Allow input to shrink
+            }}
             placeholder="Type a message..."
           />
-          <button type="submit">Send</button>
+          <button type="submit" style={{ 
+            minWidth: 60,
+            flexShrink: 0
+          }}>
+            Send
+          </button>
         </form>
       </div>
     </div>
