@@ -3,12 +3,14 @@ import { io } from 'socket.io-client';
 
 // Use environment variable for backend URL, fallback to localhost for development
 const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
+// Ensure no trailing slash for proper URL construction
+const BACKEND_URL = SOCKET_URL.endsWith('/') ? SOCKET_URL.slice(0, -1) : SOCKET_URL;
 const ROOM_ID = 1; // Example room, adjust as needed
 const USER_ID = Math.floor(Math.random() * 1000000); // Temporary user id for demo
 
 // Debug logging
 console.log('Environment:', import.meta.env.MODE);
-console.log('Backend URL:', SOCKET_URL);
+console.log('Backend URL:', BACKEND_URL);
 console.log('VITE_BACKEND_URL env var:', import.meta.env.VITE_BACKEND_URL);
 
 function ChatApp() {
@@ -49,8 +51,8 @@ function ChatApp() {
     socket.emit('joinRoom', ROOM_ID);
     socket.emit('userOnline', USER_ID);
 
-    // Fetch chat history - use the same backend URL for API calls
-    fetch(`${SOCKET_URL}/api/rooms/${ROOM_ID}/messages`)
+    // Fetch chat history - use the cleaned backend URL for API calls
+    fetch(`${BACKEND_URL}/api/rooms/${ROOM_ID}/messages`)
       .then(res => {
         console.log('API response status:', res.status);
         return res.json();
