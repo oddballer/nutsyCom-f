@@ -122,14 +122,28 @@ function ChatApp() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100%' }}>
+    <div style={{ display: 'flex', height: '100%', maxHeight: '100%', overflow: 'hidden' }}>
       {/* Online users sidebar */}
-      <div style={{ width: 140, background: '#f0f0f0', borderRight: '1px solid #ccc', padding: 8 }}>
+      <div style={{ 
+        width: 140, 
+        background: '#f0f0f0', 
+        borderRight: '1px solid #ccc', 
+        padding: 8,
+        display: 'flex',
+        flexDirection: 'column',
+        overflow: 'hidden'
+      }}>
         <b>Online Users</b>
         <div style={{ fontSize: '12px', color: 'gray', marginBottom: 8 }}>
           Status: {connectionStatus}
         </div>
-        <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+        <ul style={{ 
+          listStyle: 'none', 
+          padding: 0, 
+          margin: 0, 
+          flex: 1,
+          overflowY: 'auto'
+        }}>
           {onlineUsers.map(uid => (
             <li key={uid} style={{ color: uid === USER_ID ? 'blue' : 'black', fontWeight: uid === USER_ID ? 'bold' : 'normal' }}>
               User {uid}
@@ -138,8 +152,22 @@ function ChatApp() {
         </ul>
       </div>
       {/* Chat area */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ flex: 1, overflowY: 'auto', marginBottom: 8, background: '#fff', padding: 8, border: '1px solid #ccc' }}>
+      <div style={{ 
+        flex: 1, 
+        display: 'flex', 
+        flexDirection: 'column',
+        overflow: 'hidden',
+        minHeight: 0 // Important for flex child to shrink
+      }}>
+        <div style={{ 
+          flex: 1, 
+          overflowY: 'auto', 
+          marginBottom: 8, 
+          background: '#fff', 
+          padding: 8, 
+          border: '1px solid #ccc',
+          minHeight: 0 // Important for flex child to shrink
+        }}>
           {messages.map((msg, idx) => (
             <div key={idx} style={{ marginBottom: 4 }}>
               <b>{msg.username || `User ${msg.user_id || msg.userId}`}:</b> {msg.content}
@@ -147,7 +175,11 @@ function ChatApp() {
           ))}
           <div ref={messagesEndRef} />
         </div>
-        <form onSubmit={sendMessage} style={{ display: 'flex', gap: 8 }}>
+        <form onSubmit={sendMessage} style={{ 
+          display: 'flex', 
+          gap: 8,
+          flexShrink: 0 // Prevent form from shrinking
+        }}>
           <input
             type="text"
             value={input}
