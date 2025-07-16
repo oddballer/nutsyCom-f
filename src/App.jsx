@@ -59,6 +59,7 @@ function App() {
     <Desktop
       windows={windows}
       onIconDoubleClick={openWindow}
+      onWindowClick={focusWindow}
     >
       {windows.filter(w => w.isOpen).map(w => (
         <WindowApp

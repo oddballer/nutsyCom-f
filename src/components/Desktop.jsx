@@ -4,6 +4,7 @@ import original from 'react95/dist/themes/original';
 import { styleReset } from 'react95';
 import { createGlobalStyle } from 'styled-components';
 import DesktopIcon from './Icon';
+import Taskbar from './Taskbar';
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -22,7 +23,9 @@ const icons = [
   // Add more icons here
 ];
 
-function Desktop({ windows, onIconDoubleClick, children }) {
+function Desktop({ windows, onIconDoubleClick, onWindowClick, children }) {
+  const openWindows = windows.filter(w => w.isOpen && !w.isMinimized);
+
   return (
     <ThemeProvider theme={original}>
       <GlobalStyles />
@@ -39,6 +42,10 @@ function Desktop({ windows, onIconDoubleClick, children }) {
           ))}
         </div>
         {children}
+        <Taskbar 
+          openWindows={openWindows}
+          onWindowClick={onWindowClick}
+        />
       </div>
     </ThemeProvider>
   );
