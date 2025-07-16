@@ -83,6 +83,12 @@ function ChatApp() {
       setMessages(prev => [...prev, msg]);
     });
 
+    // Listen for chat errors
+    socket.on('chatError', (error) => {
+      console.error('Chat error from server:', error);
+      setConnectionStatus(`Error: ${error.message}`);
+    });
+
     // Listen for online users
     socket.on('onlineUsers', (users) => {
       setOnlineUsers(users);
@@ -103,9 +109,16 @@ function ChatApp() {
   const sendMessage = (e) => {
     e.preventDefault();
     if (!input.trim()) return;
-    const msg = { roomId: ROOM_ID, userId: USER_ID, content: input };
-    socketRef.current.emit('chatMessage', msg);
-    setInput('');
+    
+    try {
+      const msg = { roomId: ROOM_ID, userId: USER_ID, content: input };
+      console.log('Sending message:', msg);
+      socketRef.current.emit('chatMessage', msg);
+      setInput('');
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setConnectionStatus('Send Error');
+    }
   };
 
   return (
