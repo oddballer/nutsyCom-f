@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, Button } from 'react95';
+import { Button } from 'react95';
 
 function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
   const formatTime = () => {
@@ -32,7 +32,32 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
         height: '100%',
         padding: '0 4px'
       }}>
-        <div style={{ display: 'flex', gap: 4 }}>
+        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+          {/* Start Button */}
+          <Button
+            style={{ 
+              height: 20,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+              padding: '0 8px',
+              backgroundColor: '#c0c0c0',
+              border: '2px outset #c0c0c0'
+            }}
+          >
+            <img 
+              src="/walnut.png" 
+              alt="Start"
+              style={{ 
+                width: 16, 
+                height: 16,
+                objectFit: 'contain'
+              }}
+            />
+            <span style={{ fontSize: '11px', fontWeight: 'bold' }}>Start</span>
+          </Button>
+          
+          {/* Window Buttons */}
           {openWindows.map(window => (
             <Button
               key={window.id}
