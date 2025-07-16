@@ -126,7 +126,8 @@ function ChatApp() {
       display: 'flex', 
       flex: 1,
       overflow: 'hidden',
-      width: '100%'
+      width: '100%',
+      height: '100%'
     }}>
       {/* Online users sidebar */}
       <div style={{ 
@@ -170,7 +171,6 @@ function ChatApp() {
         <div style={{ 
           flex: 1, 
           overflowY: 'auto', 
-          marginBottom: 8, 
           background: '#fff', 
           padding: 8, 
           border: '1px solid #ccc',
@@ -193,7 +193,8 @@ function ChatApp() {
           display: 'flex', 
           gap: 8,
           flexShrink: 0,
-          minHeight: 40
+          minHeight: 40,
+          marginTop: 8
         }}>
           <input
             type="text"
