@@ -52,9 +52,16 @@ function ChatApp() {
     socket.emit('userOnline', USER_ID);
 
     // Fetch chat history - use the cleaned backend URL for API calls
-    fetch(`${BACKEND_URL}/api/rooms/${ROOM_ID}/messages`)
+    const apiUrl = `${BACKEND_URL}/api/rooms/${ROOM_ID}/messages`;
+    console.log('Attempting to fetch from:', apiUrl);
+    
+    fetch(apiUrl)
       .then(res => {
         console.log('API response status:', res.status);
+        console.log('API response headers:', res.headers);
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
         return res.json();
       })
       .then(data => {
@@ -63,6 +70,11 @@ function ChatApp() {
       })
       .catch(err => {
         console.error('Failed to fetch messages:', err);
+        console.error('Error details:', {
+          message: err.message,
+          stack: err.stack,
+          url: apiUrl
+        });
         setConnectionStatus('API Error');
       });
 
