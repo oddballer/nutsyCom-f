@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, Toolbar, Button, Text } from 'react95';
+import { AppBar, Toolbar, Button } from 'react95';
 
 function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
   const formatTime = () => {
@@ -31,9 +31,9 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
           ))}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Text style={{ fontSize: '12px' }}>
+          <span style={{ fontSize: '12px', color: 'inherit' }}>
             {formatTime()}
-          </Text>
+          </span>
         </div>
       </Toolbar>
     </AppBar>
