@@ -12,8 +12,26 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
   };
 
   return (
-    <AppBar style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1000 }}>
-      <Toolbar style={{ justifyContent: 'space-between' }}>
+    <div style={{ 
+      position: 'fixed', 
+      bottom: 0, 
+      left: 0, 
+      right: 0, 
+      zIndex: 1000,
+      height: 28,
+      backgroundColor: '#c0c0c0',
+      borderTop: '2px solid #ffffff',
+      borderLeft: '2px solid #ffffff',
+      borderRight: '2px solid #808080',
+      borderBottom: '2px solid #808080'
+    }}>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        height: '100%',
+        padding: '0 4px'
+      }}>
         <div style={{ display: 'flex', gap: 4 }}>
           {openWindows.map(window => (
             <Button
@@ -21,22 +39,21 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
               onClick={() => onWindowClick(window.id)}
               style={{ 
                 minWidth: 120,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 4
+                height: 20,
+                fontSize: '11px'
               }}
             >
-              <span>{window.title}</span>
+              {window.title}
             </Button>
           ))}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: '12px', color: 'inherit' }}>
+          <span style={{ fontSize: '11px', color: '#000000' }}>
             {formatTime()}
           </span>
         </div>
-      </Toolbar>
-    </AppBar>
+      </div>
+    </div>
   );
 }
 
