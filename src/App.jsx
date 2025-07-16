@@ -10,7 +10,7 @@ const initialWindows = [
     isOpen: false,
     isMinimized: false,
     position: { x: 100, y: 100 },
-    size: { width: 400, height: 300 },
+    size: { width: 600, height: 400 },
     zIndex: 1,
     content: <ChatApp />,
   },

@@ -62,10 +62,11 @@ function WindowApp({
           </div>
         </WindowHeader>
         <WindowContent style={{ 
-          height: 'calc(100% - 40px)', // Subtract header height
+          height: 'calc(100% - 32px)', // More accurate header height
           overflow: 'hidden',
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          padding: '8px'
         }}>
           {children}
         </WindowContent>
