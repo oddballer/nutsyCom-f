@@ -57,7 +57,7 @@ function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, onTask
               whiteSpace: 'pre',
             }}
             aria-hidden="true"
-          >
+          >{`
       ___           ___                       ___                 
      /__/\         /__/\          ___        /  /\          ___   
      \  \:\        \  \:\        /  /\      /  /:/_        /__/|  
@@ -69,7 +69,7 @@ function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, onTask
    \  \:\        \  \:\/:/        \  \:\   \__\/ /:/        \  \:\
     \  \:\        \  \::/          \__\/     /__/:/          \__\/
      \__\/         \__\/                     \__\/                
-        </pre>
+          `}</pre>
         </div>
         <div style={{ position: 'absolute', left: 40, top: 40, display: 'flex', flexDirection: 'column', gap: 32 }}>
           {icons.map(icon => (
