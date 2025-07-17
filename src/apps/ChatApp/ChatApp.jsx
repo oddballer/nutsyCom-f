@@ -181,24 +181,27 @@ function ChatApp() {
         <div style={{ fontSize: '12px', color: 'blue', marginBottom: 8 }}>
           Logged in as: {user.display_name || user.username}
         </div>
-        <ul style={{
-          listStyle: 'none',
-          padding: 0,
-          margin: 0,
-          flex: 1,
-          overflowY: 'auto'
-        }}>
-          <b>Online Users:</b>
-          {onlineUsers.map(user => (
-            <li key={user.id} style={{
-              color: user.id === user.id ? 'blue' : 'black',
-              fontWeight: user.id === user.id ? 'bold' : 'normal',
-              fontSize: '12px'
-            }}>
-              {user.display_name}
-            </li>
-          ))}
-        </ul>
+        <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: 4 }}>
+          Online Users:
+        </div>
+        <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+          <ul style={{
+            listStyle: 'none',
+            padding: 0,
+            margin: 0
+          }}>
+            {onlineUsers.map(u => (
+              <li key={u.id} style={{
+                color: u.id === user.id ? 'blue' : 'black',
+                fontWeight: u.id === user.id ? 'bold' : 'normal',
+                fontSize: '12px',
+                padding: '2px 0'
+              }}>
+                {u.display_name}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
       {/* Chat area */}
       <div style={{
