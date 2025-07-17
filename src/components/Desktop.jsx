@@ -23,21 +23,6 @@ const icons = [
   // Add more icons here
 ];
 
-// ASCII art for desktop background
-const asciiArt = `
-      ___           ___                       ___                 
-     /__/\         /__/\          ___        /  /\          ___   
-     \  \:\        \  \:\        /  /\      /  /:/_        /__/|  
-      \  \:\        \  \:\      /  /:/     /  /:/ /\      |  |:|  
-  _____\__\:\   ___  \  \:\    /  /:/     /  /:/ /::\     |  |:|  
- /__/::::::::\ /__/\  \__\:\  /  /::\    /__/:/ /:/\:\  __|__|:|  
- \  \:\~~\~~\/ \  \:\ /  /:/ /__/:/\:\   \  \:\/:/~/:/ /__/::::\  
-  \  \:\  ~~~   \  \:\  /:/  \__\/  \:\   \  \::/ /:/     ~\~~\:\ 
-   \  \:\        \  \:\/:/        \  \:\   \__/\ /:/        \  \:\
-    \  \:\        \  \::/          \__/\/     /__/:/          \__\/
-     \__/\/         \__/\/                     \__/\/                
-`;
-
 function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, onTaskbarButtonClick, children }) {
   const openWindows = windows.filter(w => w.isOpen && !w.isMinimized);
 
@@ -73,8 +58,18 @@ function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, onTask
             }}
             aria-hidden="true"
           >
-            {asciiArt}
-          </pre>
+      ___           ___                       ___                 
+     /__/\         /__/\          ___        /  /\          ___   
+     \  \:\        \  \:\        /  /\      /  /:/_        /__/|  
+      \  \:\        \  \:\      /  /:/     /  /:/ /\      |  |:|  
+  _____\__\:\   ___  \  \:\    /  /:/     /  /:/ /::\     |  |:|  
+ /__/::::::::\ /__/\  \__\:\  /  /::\    /__/:/ /:/\:\  __|__|:|  
+ \  \:\~~\~~\/ \  \:\ /  /:/ /__/:/\:\   \  \:\/:/~/:/ /__/::::\  
+  \  \:\  ~~~   \  \:\  /:/  \__\/  \:\   \  \::/ /:/     ~\~~\:\ 
+   \  \:\        \  \:\/:/        \  \:\   \__\/ /:/        \  \:\
+    \  \:\        \  \::/          \__\/     /__/:/          \__\/
+     \__\/         \__\/                     \__\/                
+        </pre>
         </div>
         <div style={{ position: 'absolute', left: 40, top: 40, display: 'flex', flexDirection: 'column', gap: 32 }}>
           {icons.map(icon => (
