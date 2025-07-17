@@ -91,7 +91,7 @@ const LoginWindow = ({ onClose }) => {
       alignItems: 'center',
       height: '100vh',
       width: '100vw',
-      background: 'teal',
+      background: '#73a08d',
     }}>
       <Window style={{ minWidth: 340, maxWidth: '90vw' }}>
         <WindowHeader>
