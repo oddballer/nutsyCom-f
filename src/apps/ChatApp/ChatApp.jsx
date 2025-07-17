@@ -226,7 +226,7 @@ function ChatApp() {
             />
             <Button
               type="submit"
-              style={{ minWidth: 60, flexShrink: 0 }}
+              style={{ minWidth: 60, flexShrink: 0, marginRight: 4 }}
               disabled={!user || connectionStatus !== 'In chat room'}
             >
               Send
