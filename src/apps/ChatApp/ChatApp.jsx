@@ -17,7 +17,7 @@ function ChatApp() {
   const [authError, setAuthError] = useState('');
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
-  const { user, token, logout } = useAuth();
+  const { user, token } = useAuth();
 
   useEffect(() => {
     if (!user || !token) {
@@ -125,10 +125,6 @@ function ChatApp() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-  };
-
   if (!user) {
     return (
       <div style={{
@@ -167,12 +163,6 @@ function ChatApp() {
         overflow: 'hidden',
         flexShrink: 0
       }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <b>Online Users</b>
-          <Button size="sm" onClick={handleLogout}>
-            Logout
-          </Button>
-        </div>
         <div style={{ fontSize: '12px', color: 'gray', marginBottom: 8 }}>
           Status: {connectionStatus}
         </div>
@@ -198,13 +188,14 @@ function ChatApp() {
           flex: 1,
           overflowY: 'auto'
         }}>
-          {onlineUsers.map(uid => (
-            <li key={uid} style={{
-              color: uid === user.id ? 'blue' : 'black',
-              fontWeight: uid === user.id ? 'bold' : 'normal',
+          <b>Online Users:</b>
+          {onlineUsers.map(user => (
+            <li key={user.id} style={{
+              color: user.id === user.id ? 'blue' : 'black',
+              fontWeight: user.id === user.id ? 'bold' : 'normal',
               fontSize: '12px'
             }}>
-              User {uid}
+              {user.display_name}
             </li>
           ))}
         </ul>
