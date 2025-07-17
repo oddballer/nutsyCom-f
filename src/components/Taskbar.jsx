@@ -136,7 +136,7 @@ function Taskbar({ windows, onWindowClick, onMinimize, onClose, onTaskbarButtonC
                 height: 28,
                 fontSize: '12px',
                 backgroundColor: window.isMinimized ? '#94acce' : '#f7d6a8',
-                color: window.isMinimized ? '#f7d6a8' : '#94acce',
+                color: window.isMinimized ? '#998271' : '#6e8099',
                 fontStyle: window.isMinimized ? 'italic' : 'normal',
                 opacity: window.isMinimized ? 0.7 : 1
               }}
