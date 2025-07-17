@@ -5,8 +5,8 @@ import Taskbar from './Taskbar';
 const icons = [
   { 
     id: 'chat', 
-    iconName: 'user_world-1.png', 
-    label: 'Chat',
+    iconName: 'world-4.png', 
+    label: 'BigChat',
     isImage: true // Flag to indicate this is an image file
   },
   {
