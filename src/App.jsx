@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { ThemeProvider } from 'react95';
-import original from 'react95/dist/themes/original';
 import Desktop from './components/Desktop';
 import WindowApp from './components/WindowApp';
 import ChatApp from './apps/ChatApp/ChatApp';
@@ -134,11 +132,9 @@ function AppContent() {
 
 function App() {
   return (
-    <ThemeProvider theme={original}>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </ThemeProvider>
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 
