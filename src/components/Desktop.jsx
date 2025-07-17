@@ -9,6 +9,12 @@ const icons = [
     label: 'Chat',
     isImage: true // Flag to indicate this is an image file
   },
+  {
+    id: 'olive',
+    iconName: 'olive.jpeg',
+    label: 'Olive',
+    isImage: true
+  },
   // Add more icons here
 ];
 

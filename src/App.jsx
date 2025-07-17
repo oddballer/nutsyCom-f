@@ -3,6 +3,7 @@ import Desktop from './components/Desktop';
 import WindowApp from './components/WindowApp';
 import ChatApp from './apps/ChatApp/ChatApp';
 import LoginWindow from './components/LoginWindow';
+import ImageApp from './apps/ImageApp';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 const initialWindows = [
@@ -15,6 +16,16 @@ const initialWindows = [
     size: { width: 600, height: 400 },
     zIndex: 1,
     content: <ChatApp />,
+  },
+  {
+    id: 'olive',
+    title: 'Olive',
+    isOpen: false,
+    isMinimized: false,
+    position: { x: 180, y: 120 },
+    size: { width: 420, height: 380 },
+    zIndex: 1,
+    content: <ImageApp initialImage={'/olive.jpeg'} />, // Pass the image path as a prop
   },
   // Add more apps here
 ];
