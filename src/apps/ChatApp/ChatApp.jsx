@@ -192,7 +192,8 @@ function ChatApp() {
           flexDirection: 'column',
           overflow: 'hidden',
           minWidth: 0,
-          minHeight: 0
+          minHeight: 0,
+          padding: 0
         }}>
           <ScrollView style={{ flex: 1, background: '#cec0ad', border: '1px solid #ccc', padding: 8, minHeight: 0, wordWrap: 'break-word', overflowWrap: 'break-word' }}>
             <div>
