@@ -163,24 +163,6 @@ function ChatApp() {
         overflow: 'hidden',
         flexShrink: 0
       }}>
-        <div style={{ fontSize: '12px', color: 'gray', marginBottom: 8 }}>
-          Status: {connectionStatus}
-        </div>
-        {authError && (
-          <div style={{
-            fontSize: '12px',
-            color: '#d32f2f',
-            marginBottom: 8,
-            padding: 4,
-            backgroundColor: '#ffebee',
-            border: '1px solid #f44336'
-          }}>
-            {authError}
-          </div>
-        )}
-        <div style={{ fontSize: '12px', color: 'blue', marginBottom: 8 }}>
-          Logged in as: {user.display_name || user.username}
-        </div>
         <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: 4 }}>
           Online Users:
         </div>
