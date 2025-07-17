@@ -107,6 +107,7 @@ function AppContent() {
       windows={windows}
       onIconDoubleClick={openWindow}
       onWindowClick={focusWindow}
+      onMinimize={minimizeWindow}
     >
       {windows.filter(w => w.isOpen).map(w => (
         <WindowApp

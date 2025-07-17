@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { AppBar, Toolbar, Button, MenuList, MenuListItem, Separator } from 'react95';
 import { useAuth } from '../contexts/AuthContext';
 
-function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
+function Taskbar({ windows, onWindowClick, onMinimize, onClose }) {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { user, logout } = useAuth();
@@ -116,7 +116,7 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
           </div>
           
           {/* Window Buttons */}
-          {openWindows.map(window => (
+          {windows.filter(w => w.isOpen).map(window => (
             <Button
               key={window.id}
               onClick={() => handleWindowClick(window)}
@@ -125,7 +125,9 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
                 height: 28,
                 fontSize: '12px',
                 backgroundColor: window.isMinimized ? '#808080' : '#c0c0c0',
-                color: window.isMinimized ? '#ffffff' : '#000000'
+                color: window.isMinimized ? '#ffffff' : '#000000',
+                fontStyle: window.isMinimized ? 'italic' : 'normal',
+                opacity: window.isMinimized ? 0.7 : 1
               }}
             >
               {window.title}
