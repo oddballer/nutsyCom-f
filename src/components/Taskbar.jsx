@@ -104,8 +104,8 @@ function Taskbar({ windows, onWindowClick, onMinimize, onClose, onTaskbarButtonC
               >
                 <MenuListItem>
                   <img 
-                    src="/user_world-1.png" 
-                    alt="Chat"
+                    src="/world-4.png" 
+                    alt="BigChat"
                     style={{ 
                       width: 16, 
                       height: 16,
@@ -113,7 +113,7 @@ function Taskbar({ windows, onWindowClick, onMinimize, onClose, onTaskbarButtonC
                       marginRight: 8
                     }}
                   />
-                  Chat
+                  BigChat
                 </MenuListItem>
                 <Separator />
                 <MenuListItem>
