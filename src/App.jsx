@@ -9,7 +9,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 const initialWindows = [
   {
     id: 'chat',
-    title: 'Chat',
+    title: 'BigChat',
     isOpen: false,
     isMinimized: false,
     position: { x: 100, y: 100 },
