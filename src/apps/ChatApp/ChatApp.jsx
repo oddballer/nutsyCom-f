@@ -1,18 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from '../../contexts/AuthContext';
-import { Button, Text } from 'react95';
+import { Button } from 'react95';
 
 // Use environment variable for backend URL, fallback to localhost for development
 const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
 // Ensure no trailing slash for proper URL construction
 const BACKEND_URL = SOCKET_URL.endsWith('/') ? SOCKET_URL.slice(0, -1) : SOCKET_URL;
 const ROOM_ID = 1; // General room
-
-// Debug logging
-console.log('Environment:', import.meta.env.MODE);
-console.log('Backend URL:', BACKEND_URL);
-console.log('VITE_BACKEND_URL env var:', import.meta.env.VITE_BACKEND_URL);
 
 function ChatApp() {
   const [messages, setMessages] = useState([]);
@@ -30,8 +25,6 @@ function ChatApp() {
       return;
     }
 
-    console.log('Attempting to connect to:', SOCKET_URL);
-    
     // Connect to socket.io server
     const socket = io(SOCKET_URL, {
       transports: ['websocket', 'polling'],
@@ -41,46 +34,36 @@ function ChatApp() {
 
     // Connection event handlers
     socket.on('connect', () => {
-      console.log('Connected to backend');
       setConnectionStatus('Connected');
-      
       // Authenticate the socket connection
       socket.emit('authenticate', token);
     });
 
     socket.on('authenticated', (data) => {
-      console.log('Socket authenticated:', data);
       setConnectionStatus('Authenticated');
-      
       // Join room after authentication
       socket.emit('joinRoom', ROOM_ID);
     });
 
     socket.on('authError', (error) => {
-      console.error('Socket authentication error:', error);
       setAuthError(error.message);
       setConnectionStatus('Authentication failed');
     });
 
     socket.on('connect_error', (error) => {
-      console.error('Connection error:', error);
       setConnectionStatus('Connection failed');
     });
 
     socket.on('disconnect', () => {
-      console.log('Disconnected from backend');
       setConnectionStatus('Disconnected');
     });
 
     socket.on('roomJoined', (data) => {
-      console.log('Joined room:', data);
       setConnectionStatus('In chat room');
     });
 
-    // Fetch chat history - use the cleaned backend URL for API calls
+    // Fetch chat history
     const apiUrl = `${BACKEND_URL}/api/rooms/${ROOM_ID}/messages`;
-    console.log('Attempting to fetch from:', apiUrl);
-    
     fetch(apiUrl, {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -88,24 +71,13 @@ function ChatApp() {
       }
     })
       .then(res => {
-        console.log('API response status:', res.status);
-        console.log('API response headers:', res.headers);
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         return res.json();
       })
       .then(data => {
-        console.log('Fetched messages:', data);
         setMessages(data);
       })
       .catch(err => {
-        console.error('Failed to fetch messages:', err);
-        console.error('Error details:', {
-          message: err.message,
-          stack: err.stack,
-          url: apiUrl
-        });
         setConnectionStatus('API Error');
       });
 
@@ -116,13 +88,11 @@ function ChatApp() {
 
     // Listen for chat errors
     socket.on('chatError', (error) => {
-      console.error('Chat error from server:', error);
       setConnectionStatus(`Error: ${error.message}`);
     });
 
     // Listen for general errors
     socket.on('error', (error) => {
-      console.error('Socket error:', error);
       setConnectionStatus(`Error: ${error.message}`);
     });
 
@@ -134,7 +104,7 @@ function ChatApp() {
     return () => {
       socket.disconnect();
     };
-  }, [user, token, SOCKET_URL, BACKEND_URL]);
+  }, [user, token]);
 
   useEffect(() => {
     // Scroll to bottom on new message
@@ -146,14 +116,11 @@ function ChatApp() {
   const sendMessage = (e) => {
     e.preventDefault();
     if (!input.trim() || !user) return;
-    
     try {
       const msg = { roomId: ROOM_ID, content: input };
-      console.log('Sending message:', msg);
       socketRef.current.emit('chatMessage', msg);
       setInput('');
     } catch (error) {
-      console.error('Error sending message:', error);
       setConnectionStatus('Send Error');
     }
   };
@@ -164,36 +131,36 @@ function ChatApp() {
 
   if (!user) {
     return (
-      <div style={{ 
-        display: 'flex', 
+      <div style={{
+        display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center', 
+        alignItems: 'center',
         justifyContent: 'center',
         height: '100%',
         padding: 20,
         textAlign: 'center'
       }}>
-        <Text style={{ marginBottom: 16 }}>
+        <div style={{ marginBottom: 16, fontSize: '14px' }}>
           Please log in to access the chat.
-        </Text>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ 
-      display: 'flex', 
+    <div style={{
+      display: 'flex',
       flex: 1,
       overflow: 'hidden',
       width: '100%',
       height: '100%'
     }}>
       {/* Online users sidebar */}
-      <div style={{ 
-        width: 140, 
+      <div style={{
+        width: 140,
         minWidth: 140,
-        background: '#f0f0f0', 
-        borderRight: '1px solid #ccc', 
+        background: '#f0f0f0',
+        borderRight: '1px solid #ccc',
         padding: 8,
         display: 'flex',
         flexDirection: 'column',
@@ -210,9 +177,9 @@ function ChatApp() {
           Status: {connectionStatus}
         </div>
         {authError && (
-          <div style={{ 
-            fontSize: '12px', 
-            color: '#d32f2f', 
+          <div style={{
+            fontSize: '12px',
+            color: '#d32f2f',
             marginBottom: 8,
             padding: 4,
             backgroundColor: '#ffebee',
@@ -224,16 +191,16 @@ function ChatApp() {
         <div style={{ fontSize: '12px', color: 'blue', marginBottom: 8 }}>
           Logged in as: {user.display_name || user.username}
         </div>
-        <ul style={{ 
-          listStyle: 'none', 
-          padding: 0, 
-          margin: 0, 
+        <ul style={{
+          listStyle: 'none',
+          padding: 0,
+          margin: 0,
           flex: 1,
           overflowY: 'auto'
         }}>
           {onlineUsers.map(uid => (
-            <li key={uid} style={{ 
-              color: uid === user.id ? 'blue' : 'black', 
+            <li key={uid} style={{
+              color: uid === user.id ? 'blue' : 'black',
               fontWeight: uid === user.id ? 'bold' : 'normal',
               fontSize: '12px'
             }}>
@@ -243,26 +210,26 @@ function ChatApp() {
         </ul>
       </div>
       {/* Chat area */}
-      <div style={{ 
-        flex: 1, 
-        display: 'flex', 
+      <div style={{
+        flex: 1,
+        display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
         minWidth: 0,
         minHeight: 0
       }}>
-        <div style={{ 
-          flex: 1, 
-          overflowY: 'auto', 
-          background: '#fff', 
-          padding: 8, 
+        <div style={{
+          flex: 1,
+          overflowY: 'auto',
+          background: '#fff',
+          padding: 8,
           border: '1px solid #ccc',
           minHeight: 0,
           wordWrap: 'break-word',
           overflowWrap: 'break-word'
         }}>
           {messages.map((msg, idx) => (
-            <div key={idx} style={{ 
+            <div key={idx} style={{
               marginBottom: 4,
               wordWrap: 'break-word',
               overflowWrap: 'break-word'
@@ -272,8 +239,8 @@ function ChatApp() {
           ))}
           <div ref={messagesEndRef} />
         </div>
-        <form onSubmit={sendMessage} style={{ 
-          display: 'flex', 
+        <form onSubmit={sendMessage} style={{
+          display: 'flex',
           gap: 8,
           flexShrink: 0,
           minHeight: 40,
@@ -283,16 +250,16 @@ function ChatApp() {
             type="text"
             value={input}
             onChange={e => setInput(e.target.value)}
-            style={{ 
+            style={{
               flex: 1,
               minWidth: 0
             }}
             placeholder="Type a message..."
             disabled={!user || connectionStatus !== 'In chat room'}
           />
-          <button 
-            type="submit" 
-            style={{ 
+          <button
+            type="submit"
+            style={{
               minWidth: 60,
               flexShrink: 0
             }}

@@ -24,7 +24,7 @@ const icons = [
 ];
 
 function Desktop({ windows, onIconDoubleClick, onWindowClick, children }) {
-  const openWindows = windows.filter(w => w.isOpen);
+  const openWindows = windows.filter(w => w.isOpen && !w.isMinimized);
 
   return (
     <ThemeProvider theme={original}>
