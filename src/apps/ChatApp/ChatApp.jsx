@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from '../../contexts/AuthContext';
-import { Button } from 'react95';
+import { Button, TextInput } from 'react95';
 
 // Use environment variable for backend URL, fallback to localhost for development
 const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
@@ -240,27 +240,21 @@ function ChatApp() {
           minHeight: 40,
           marginTop: 8
         }}>
-          <input
-            type="text"
+          <TextInput
             value={input}
             onChange={e => setInput(e.target.value)}
-            style={{
-              flex: 1,
-              minWidth: 0
-            }}
+            style={{ flex: 1, minWidth: 0 }}
             placeholder="Type a message..."
             disabled={!user || connectionStatus !== 'In chat room'}
+            fullWidth
           />
-          <button
+          <Button
             type="submit"
-            style={{
-              minWidth: 60,
-              flexShrink: 0
-            }}
+            style={{ minWidth: 60, flexShrink: 0 }}
             disabled={!user || connectionStatus !== 'In chat room'}
           >
             Send
-          </button>
+          </Button>
         </form>
       </div>
     </div>
