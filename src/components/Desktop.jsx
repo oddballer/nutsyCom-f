@@ -1,17 +1,6 @@
 import React from 'react';
-import { ThemeProvider } from 'styled-components';
-import original from 'react95/dist/themes/original';
-import { styleReset } from 'react95';
-import { createGlobalStyle } from 'styled-components';
 import DesktopIcon from './Icon';
 import Taskbar from './Taskbar';
-
-const GlobalStyles = createGlobalStyle`
-  ${styleReset}
-  body {
-    background: teal;
-  }
-`;
 
 const icons = [
   { 
@@ -27,8 +16,6 @@ function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, onTask
   const openWindows = windows.filter(w => w.isOpen && !w.isMinimized);
 
   return (
-    <ThemeProvider theme={original}>
-      <GlobalStyles />
       <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
         {/* ASCII Art Background */}
         <div
@@ -92,7 +79,6 @@ function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, onTask
           onTaskbarButtonClick={onTaskbarButtonClick}
         />
       </div>
-    </ThemeProvider>
   );
 }
 
