@@ -7,6 +7,7 @@ function Taskbar({ windows, onWindowClick, onMinimize, onClose, onTaskbarButtonC
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const startMenuRef = useRef(null);
+  const userMenuRef = useRef(null);
 
   // Close Start menu when clicking outside
   useEffect(() => {
@@ -19,6 +20,18 @@ function Taskbar({ windows, onWindowClick, onMinimize, onClose, onTaskbarButtonC
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, [startMenuOpen]);
+
+  // Close User menu when clicking outside
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    function handleClick(e) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [userMenuOpen]);
 
   const formatTime = () => {
     const now = new Date();
@@ -161,7 +174,7 @@ function Taskbar({ windows, onWindowClick, onMinimize, onClose, onTaskbarButtonC
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           {/* User Info */}
           {user && (
-            <div style={{ position: 'relative', display: 'inline-block' }}>
+            <div style={{ position: 'relative', display: 'inline-block' }} ref={userMenuRef}>
               <Button
                 onClick={toggleUserMenu}
                 active={userMenuOpen}
