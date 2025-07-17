@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from '../../contexts/AuthContext';
-import { Button, TextInput, ScrollView } from 'react95';
+import { Button, TextInput, ScrollView, WindowContent } from 'react95';
 
 // Use environment variable for backend URL, fallback to localhost for development
 const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
@@ -160,13 +160,7 @@ function ChatApp() {
     <>
       <audio ref={imrcvRef} src="/imrcv.wav" preload="auto" />
       <audio ref={imsendRef} src="/imsend.wav" preload="auto" />
-      <div style={{
-        display: 'flex',
-        flex: 1,
-        overflow: 'hidden',
-        width: '100%',
-        height: '100%'
-      }}>
+      <WindowContent style={{ display: 'flex', flex: 1, overflow: 'hidden', width: '100%', height: '100%' }}>
         {/* Online users sidebar */}
         <div style={{
           width: 140,
@@ -239,7 +233,7 @@ function ChatApp() {
             </Button>
           </form>
         </div>
-      </div>
+      </WindowContent>
     </>
   );
 }
