@@ -60,7 +60,7 @@ function AppContent() {
   const focusWindow = (id) => {
     setWindows(ws => ws.map(w =>
       w.id === id 
-        ? { ...w, zIndex: zCounter, isMinimized: false } // Restore if minimized
+        ? { ...w, isOpen: true, isMinimized: false, zIndex: zCounter } // Open if not open, restore if minimized
         : w
     ));
     setZCounter(z => z + 1);
