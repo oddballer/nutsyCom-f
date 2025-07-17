@@ -63,12 +63,13 @@ function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, onTask
           <pre
             style={{
               color: '#fff',
-              fontFamily: 'monospace',
-              fontSize: 18,
+              fontFamily: 'ms_sans_serif, monospace',
+              fontSize: 15,
               textAlign: 'center',
               userSelect: 'none',
               cursor: 'default',
-              margin: 0
+              margin: 0,
+              whiteSpace: 'pre',
             }}
             aria-hidden="true"
           >
