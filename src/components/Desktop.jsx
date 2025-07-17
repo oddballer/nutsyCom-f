@@ -42,7 +42,8 @@ function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, onTask
             alignItems: 'center',
             justifyContent: 'center',
             pointerEvents: 'none',
-            zIndex: 0
+            zIndex: 0,
+            paddingBottom: 36 // Height of the taskbar
           }}
         >
           <pre
