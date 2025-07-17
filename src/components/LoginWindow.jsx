@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Window, WindowHeader, WindowContent, Button, TextInput } from 'react95';
 import { useAuth } from '../contexts/AuthContext';
 
 const LoginWindow = ({ onClose }) => {
@@ -91,224 +90,242 @@ const LoginWindow = ({ onClose }) => {
       alignItems: 'center',
       height: '100vh',
       width: '100vw',
-      background: '#008080',
-      overflow: 'hidden'
+      background: '#f5f5f5',
+      fontFamily: 'Arial, sans-serif'
     }}>
-      <Window style={{
-        width: 350,
-        height: isLogin ? 280 : 420,
-        maxWidth: '90%',
-        maxHeight: '90vh',
-        overflow: 'hidden'
+      <div style={{
+        background: '#ffffff',
+        padding: '40px',
+        borderRadius: 8,
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        width: '350px',
+        maxWidth: '90%'
       }}>
-        <WindowHeader style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexShrink: 0
+        <div style={{
+          textAlign: 'center',
+          marginBottom: '30px'
         }}>
-          <span>{isLogin ? 'Login' : 'Register'}</span>
-          <Button onClick={onClose} size="sm" style={{ marginLeft: 'auto' }}>
-            ✕
-          </Button>
-        </WindowHeader>
-        <WindowContent style={{
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          height: `calc(100% - 40px)`
-        }}>
-          <form onSubmit={handleSubmit} style={{
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-            overflow: 'hidden'
+          <h2 style={{
+            margin: '0 0 10px 0',
+            color: '#333333',
+            fontSize: '24px'
           }}>
-            {/* Custom fieldset replacement */}
-            <div style={{
-              flex: 1,
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column',
-              border: '2px inset #c0c0c0',
-              padding: '8px',
+            {isLogin ? 'Login' : 'Register'}
+          </h2>
+          <p style={{
+            margin: '0',
+            color: '#666666',
+            fontSize: '14px'
+          }}>
+            {isLogin ? 'Welcome back!' : 'Create your account'}
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
               marginBottom: '8px',
-              background: '#ffffff'
+              color: '#333333',
+              fontSize: '14px',
+              fontWeight: 500
             }}>
-              <div style={{
-                fontSize: '12px',
-                fontWeight: 'bold',
+              Username
+            </label>
+            <input
+              type="text"
+              value={formData.username}
+              onChange={(e) => handleInputChange('username', e.target.value)}
+              placeholder="Enter username"
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #cccccc',
+                borderRadius: '4px',
+                fontSize: '14px',
+                boxSizing: 'border-box',
+                backgroundColor: loading ? '#f5f5f5' : '#ffffff'
+              }}
+            />
+          </div>
+
+          {!isLogin && (
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                display: 'block',
                 marginBottom: '8px',
-                color: '#000000'
+                color: '#333333',
+                fontSize: '14px',
+                fontWeight: '500'
               }}>
-                {isLogin ? 'Login Information' : 'Account Information'}
-              </div>
-              
-              <div style={{
-                marginBottom: 12,
-                minHeight: 0,
-                overflow: 'hidden'
-              }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: 2,
-                  fontSize: '12px',
-                  fontWeight: 'bold'
-                }}>
-                  Username:
-                </label>
-                <TextInput
-                  value={formData.username}
-                  onChange={(e) => handleInputChange('username', e.target.value)}
-                  placeholder="Enter username"
-                  fullWidth
-                  disabled={loading}
-                  style={{ minWidth: 0 }}
-                />
-              </div>
-
-              {!isLogin && (
-                <div style={{
-                  marginBottom: 12,
-                  minHeight: 0,
-                  overflow: 'hidden'
-                }}>
-                  <label style={{
-                    display: 'block',
-                    marginBottom: 2,
-                    fontSize: '12px',
-                    fontWeight: 'bold'
-                  }}>
-                    Email:
-                  </label>
-                  <TextInput
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
-                    placeholder="Enter email"
-                    fullWidth
-                    disabled={loading}
-                    style={{ minWidth: 0 }}
-                  />
-                </div>
-              )}
-
-              {!isLogin && (
-                <div style={{
-                  marginBottom: 12,
-                  minHeight: 0,
-                  overflow: 'hidden'
-                }}>
-                  <label style={{
-                    display: 'block',
-                    marginBottom: 2,
-                    fontSize: '12px',
-                    fontWeight: 'bold'
-                  }}>
-                    Display Name (optional):
-                  </label>
-                  <TextInput
-                    value={formData.display_name}
-                    onChange={(e) => handleInputChange('display_name', e.target.value)}
-                    placeholder="Enter display name"
-                    fullWidth
-                    disabled={loading}
-                    style={{ minWidth: 0 }}
-                  />
-                </div>
-              )}
-
-              <div style={{
-                marginBottom: 12,
-                minHeight: 0,
-                overflow: 'hidden'
-              }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: 2,
-                  fontSize: '12px',
-                  fontWeight: 'bold'
-                }}>
-                  Password:
-                </label>
-                <TextInput
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  placeholder="Enter password"
-                  fullWidth
-                  disabled={loading}
-                  style={{ minWidth: 0 }}
-                />
-              </div>
-
-              {!isLogin && (
-                <div style={{
-                  marginBottom: 12,
-                  minHeight: 0,
-                  overflow: 'hidden'
-                }}>
-                  <label style={{
-                    display: 'block',
-                    marginBottom: 2,
-                    fontSize: '12px',
-                    fontWeight: 'bold'
-                  }}>
-                    Confirm Password:
-                  </label>
-                  <TextInput
-                    type="password"
-                    value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                    placeholder="Confirm password"
-                    fullWidth
-                    disabled={loading}
-                    style={{ minWidth: 0 }}
-                  />
-                </div>
-              )}
+                Email
+              </label>
+              <input
+                type="email"
+                value={formData.email}
+                onChange={(e) => handleInputChange('email', e.target.value)}
+                placeholder="Enter email"
+                disabled={loading}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #cccccc',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  boxSizing: 'border-box',
+                  backgroundColor: loading ? '#f5f5f5' : '#ffffff'
+                }}
+              />
             </div>
+          )}
 
-            {error && (
-              <div style={{
-                marginBottom: 12,
-                padding: 8,
-                backgroundColor: '#ffebee',
-                border: '1px solid #f44336',
-                color: '#d32f2f',
-                fontSize: '12px',
-                flexShrink: 0
+          {!isLogin && (
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                color: '#333333',
+                fontSize: '14px',
+                fontWeight: '500'
               }}>
-                {error}
-              </div>
-            )}
+                Display Name (optional)
+              </label>
+              <input
+                type="text"
+                value={formData.display_name}
+                onChange={(e) => handleInputChange('display_name', e.target.value)}
+                placeholder="Enter display name"
+                disabled={loading}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #cccccc',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  boxSizing: 'border-box',
+                  backgroundColor: loading ? '#f5f5f5' : '#ffffff'
+                }}
+              />
+            </div>
+          )}
 
-            <div style={{
-              display: 'flex',
-              gap: 8,
-              justifyContent: 'space-between',
-              flexShrink: 0,
-              marginTop: 'auto'
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{
+              display: 'block',
+              marginBottom: '8px',
+              color: '#333333',
+              fontSize: '14px',
+              fontWeight: 500
             }}>
-              <Button
-                type="submit"
-                primary
+              Password
+            </label>
+            <input
+              type="password"
+              value={formData.password}
+              onChange={(e) => handleInputChange('password', e.target.value)}
+              placeholder="Enter password"
+              disabled={loading}
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #cccccc',
+                borderRadius: '4px',
+                fontSize: '14px',
+                boxSizing: 'border-box',
+                backgroundColor: loading ? '#f5f5f5' : '#ffffff'
+              }}
+            />
+          </div>
+
+          {!isLogin && (
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                color: '#333333',
+                fontSize: '14px',
+                fontWeight: '500'
+              }}>
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                value={formData.confirmPassword}
+                onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                placeholder="Confirm password"
                 disabled={loading}
-                style={{ flex: 1 }}
-              >
-                {loading ? 'Please wait...' : (isLogin ? 'Login' : 'Register')}
-              </Button>
-              <Button
-                onClick={toggleMode}
-                disabled={loading}
-                style={{ minWidth: 80, flexShrink: 0 }}
-              >
-                {isLogin ? 'Register' : 'Login'}
-              </Button>
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '1px solid #cccccc',
+                  borderRadius: '4px',
+                  fontSize: '14px',
+                  boxSizing: 'border-box',
+                  backgroundColor: loading ? '#f5f5f5' : '#ffffff'
+                }}
+              />
             </div>
-          </form>
-        </WindowContent>
-      </Window>
+          )}
+
+          {error && (
+            <div style={{
+              marginBottom: '20px',
+              padding: '12px',
+              backgroundColor: '#f8d7da',
+              border: '1px solid #f5c6cb',
+              borderRadius: '4px',
+              color: '#721c24',
+              fontSize: 14
+            }}>
+              {error}
+            </div>
+          )}
+
+          <div style={{
+            display: 'flex',
+            gap: '12px',
+            marginBottom: '20px'
+          }}>
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                flex: 1,
+                padding: '12px',
+                backgroundColor: '#666666',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.6 : 1
+              }}
+            >
+              {loading ? 'Please wait...' : (isLogin ? 'Login' : 'Register')}
+            </button>
+            <button
+              type="button"
+              onClick={toggleMode}
+              disabled={loading}
+              style={{
+                padding: '12px 16px',
+                backgroundColor: '#ffffff',
+                color: '#666666',
+                border: '1px solid #cccccc',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.6 : 1
+              }}
+            >
+              {isLogin ? 'Register' : 'Login'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
