@@ -176,7 +176,7 @@ function ChatApp() {
             Online Users
           </div>
           <ScrollView style={{ flex: 1, minHeight: 0, background: '#cec0ad', border: 'none', padding: 0, margin: 0 }}>
-            <div>
+            <div style={{ textAlign: 'center' }}>
               {onlineUsers.map(u => (
                 <span key={u.id} style={{ display: 'block', padding: '2px 0', alignSelf: 'center', fontWeight: 'bold', fontSize: '12px', color: u.id === user.id ? 'blue' : 'red' }}>
                   {u.display_name}
