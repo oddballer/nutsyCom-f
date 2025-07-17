@@ -12,8 +12,16 @@ function Taskbar({ windows, onWindowClick, onMinimize, onClose, onTaskbarButtonC
     return now.toLocaleTimeString('en-US', { 
       hour: '2-digit', 
       minute: '2-digit',
-      hour12: false 
+      hour12: true 
     });
+  };
+
+  const formatDate = () => {
+    const now = new Date();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const yyyy = now.getFullYear();
+    return `${mm}/${dd}/${yyyy}`;
   };
 
   const toggleStartMenu = () => {
@@ -189,10 +197,11 @@ function Taskbar({ windows, onWindowClick, onMinimize, onClose, onTaskbarButtonC
             </div>
           )}
           
-          {/* Time */}
-          <span style={{ fontSize: '12px', color: '#000000' }}>
-            {formatTime()}
-          </span>
+          {/* Time & Date */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', lineHeight: 1.1 }}>
+            <span style={{ fontSize: '12px', color: '#000000' }}>{formatTime()}</span>
+            <span style={{ fontSize: '11px', color: '#333333' }}>{formatDate()}</span>
+          </div>
         </div>
       </Toolbar>
     </AppBar>
