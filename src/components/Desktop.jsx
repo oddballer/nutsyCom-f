@@ -11,7 +11,7 @@ const icons = [
   },
   {
     id: 'olive',
-    iconName: 'olive.jpeg',
+    iconName: 'paint_file.png',
     label: 'Olive',
     isImage: true
   },
