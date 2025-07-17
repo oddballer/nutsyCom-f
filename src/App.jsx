@@ -94,13 +94,14 @@ function AppContent() {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        background: '#008080'
+        background: '#73a08d'
       }}>
         <div style={{
-          background: '#c0c0c0',
-          border: '2px outset #c0c0c0',
+          background: '#d6adb8',
+          border: '2px outset #ab5a71',
           padding: '20px',
-          textAlign: 'center'
+          textAlign: 'center',
+          color: '#f7d6a8'
         }}>
           <div>Loading...</div>
         </div>
