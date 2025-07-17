@@ -102,7 +102,7 @@ function Taskbar({ windows, onWindowClick, onMinimize, onClose, onTaskbarButtonC
                 }}
                 onClick={() => setStartMenuOpen(false)}
               >
-                <MenuListItem>
+                <MenuListItem onClick={() => { onWindowClick('chat'); setStartMenuOpen(false); }}>
                   <img 
                     src="/world-4.png" 
                     alt="BigChat"
