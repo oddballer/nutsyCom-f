@@ -2,7 +2,6 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { MenuList, MenuListItem, Separator, styleReset } from 'react95';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
-import './index.css'
 import App from './App.jsx'
 
 import original from 'react95/dist/themes/original';
