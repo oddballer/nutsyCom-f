@@ -15,7 +15,10 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
+  // Ensure BACKEND_URL doesn't have trailing slash
+  const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000').replace(/\/$/, '');
+  console.log('Backend URL:', BACKEND_URL);
+  console.log('VITE_BACKEND_URL env var:', import.meta.env.VITE_BACKEND_URL);
 
   // Check if user is authenticated on app load
   useEffect(() => {
@@ -51,7 +54,10 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
+      const url = `${BACKEND_URL}/api/auth/login`;
+      console.log('Login URL:', url);
+      
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -59,12 +65,19 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ username, password })
       });
 
-      const data = await response.json();
-
+      console.log('Login response status:',response.status);
+      
       if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
+        const errorText = await response.text();
+        console.log('Login error response:', errorText);
+        let errorMessage;
+        try {       const errorData = JSON.parse(errorText);
+          errorMessage = errorData.error || 'Login failed';        } catch {      errorMessage = `HTTP ${response.status}: ${errorText}`;
+        }
+        throw new Error(errorMessage);
       }
 
+      const data = await response.json();
       setUser(data.user);
       setToken(data.token);
       localStorage.setItem('token', data.token);
@@ -77,7 +90,10 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (username, email, password, display_name) => {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/auth/register`, {
+      const url = `${BACKEND_URL}/api/auth/register`;
+      console.log('Register URL:', url);
+      
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -85,12 +101,19 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ username, email, password, display_name })
       });
 
-      const data = await response.json();
-
+      console.log('Register response status:',response.status);
+      
       if (!response.ok) {
-        throw new Error(data.error || 'Registration failed');
+        const errorText = await response.text();
+        console.log('Register error response:', errorText);
+        let errorMessage;
+        try {       const errorData = JSON.parse(errorText);
+          errorMessage = errorData.error || 'Registration failed';        } catch {      errorMessage = `HTTP ${response.status}: ${errorText}`;
+        }
+        throw new Error(errorMessage);
       }
 
+      const data = await response.json();
       setUser(data.user);
       setToken(data.token);
       localStorage.setItem('token', data.token);
