@@ -165,7 +165,7 @@ function ChatApp() {
         <div style={{
           width: 140,
           minWidth: 140,
-          background: '#f0f0f0',
+          background: 'transparent',
           borderRight: '1px solid #ccc',
           padding: 8,
           display: 'flex',
@@ -195,7 +195,7 @@ function ChatApp() {
           minWidth: 0,
           minHeight: 0
         }}>
-          <ScrollView style={{ flex: 1, background: '#fff', border: '1px solid #ccc', padding: 8, minHeight: 0, wordWrap: 'break-word', overflowWrap: 'break-word' }}>
+          <ScrollView style={{ flex: 1, background: 'transparent', border: '1px solid #ccc', padding: 8, minHeight: 0, wordWrap: 'break-word', overflowWrap: 'break-word' }}>
             <div>
               {messages.map((msg, idx) => {
                 const isCurrentUser = msg.user_id === user.id || msg.id === user.id;
