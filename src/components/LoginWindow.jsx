@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Window, WindowHeader, WindowContent, Button, TextInput, Fieldset } from 'react95';
+import { Window, WindowHeader, WindowContent, Button, TextInput } from 'react95';
 import { useAuth } from '../contexts/AuthContext';
 
 const LoginWindow = ({ onClose }) => {
@@ -124,6 +124,26 @@ const LoginWindow = ({ onClose }) => {
             height: '100%',
             overflow: 'hidden'
           }}>
+            {/* Custom fieldset replacement */}
+            <div style={{
+              flex: 1,
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              border: '2px inset #c0c0c0',
+              padding: '8px',
+              marginBottom: '8px',
+              background: '#ffffff'
+            }}>
+              <div style={{
+                fontSize: '12px',
+                fontWeight: 'bold',
+                marginBottom: '8px',
+                color: '#000000'
+              }}>
+                {isLogin ? 'Login Information' : 'Account Information'}
+              </div>
+              
               <div style={{
                 marginBottom: 12,
                 minHeight: 0,
@@ -247,7 +267,7 @@ const LoginWindow = ({ onClose }) => {
                   />
                 </div>
               )}
-            </Fieldset>
+            </div>
 
             {error && (
               <div style={{
