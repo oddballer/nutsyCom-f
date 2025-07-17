@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AppBar, Toolbar, Button, MenuList, MenuListItem, Separator } from 'react95';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -6,6 +6,19 @@ function Taskbar({ windows, onWindowClick, onMinimize, onClose, onTaskbarButtonC
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { user, logout } = useAuth();
+  const startMenuRef = useRef(null);
+
+  // Close Start menu when clicking outside
+  useEffect(() => {
+    if (!startMenuOpen) return;
+    function handleClick(e) {
+      if (startMenuRef.current && !startMenuRef.current.contains(e.target)) {
+        setStartMenuOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [startMenuOpen]);
 
   const formatTime = () => {
     const now = new Date();
@@ -65,7 +78,7 @@ function Taskbar({ windows, onWindowClick, onMinimize, onClose, onTaskbarButtonC
       }}>
         <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
           {/* Start Button */}
-          <div style={{ position: 'relative', display: 'inline-block' }}>
+          <div style={{ position: 'relative', display: 'inline-block' }} ref={startMenuRef}>
             <Button
               onClick={toggleStartMenu}
               active={startMenuOpen}
