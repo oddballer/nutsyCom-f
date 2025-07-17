@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from '../../contexts/AuthContext';
-import { Button, TextInput, List, ListItem, ScrollView } from 'react95';
+import { Button, TextInput, ScrollView } from 'react95';
 
 // Use environment variable for backend URL, fallback to localhost for development
 const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
@@ -183,13 +183,13 @@ function ChatApp() {
             Online Users:
           </div>
           <ScrollView style={{ flex: 1, minHeight: 0, background: 'transparent', border: 'none', padding: 0, margin: 0 }}>
-            <List style={{ background: 'transparent', border: 'none', padding: 0, margin: 0 }}>
+            <div>
               {onlineUsers.map(u => (
-                <ListItem key={u.id} style={{ padding: '2px 0', fontWeight: 'bold', fontSize: '12px', background: 'transparent', border: 'none' }}>
-                  <span style={{ fontWeight: 'bold', color: u.id === user.id ? 'blue' : 'red' }}>{u.display_name}</span>
-                </ListItem>
+                <span key={u.id} style={{ display: 'block', padding: '2px 0', fontWeight: 'bold', fontSize: '12px', color: u.id === user.id ? 'blue' : 'red' }}>
+                  {u.display_name}
+                </span>
               ))}
-            </List>
+            </div>
           </ScrollView>
         </div>
         {/* Chat area */}
@@ -202,17 +202,18 @@ function ChatApp() {
           minHeight: 0
         }}>
           <ScrollView style={{ flex: 1, background: '#fff', border: '1px solid #ccc', padding: 8, minHeight: 0, wordWrap: 'break-word', overflowWrap: 'break-word' }}>
-            <List style={{ background: 'transparent', border: 'none', padding: 0, margin: 0 }}>
+            <div>
               {messages.map((msg, idx) => {
                 const isCurrentUser = msg.user_id === user.id || msg.id === user.id;
                 return (
-                  <ListItem key={idx} style={{ background: 'transparent', border: 'none', padding: '2px 0', marginBottom: 2, wordWrap: 'break-word', overflowWrap: 'break-word' }}>
-                    <span style={{ fontWeight: 'bold', color: isCurrentUser ? 'blue' : 'red' }}>{msg.display_name || msg.username || `User ${msg.user_id}`}</span>: {msg.content}
-                  </ListItem>
+                  <span key={idx} style={{ display: 'block', marginBottom: 2, padding: '2px 0', fontWeight: 'bold', color: isCurrentUser ? 'blue' : 'red', wordWrap: 'break-word', overflowWrap: 'break-word' }}>
+                    {msg.display_name || msg.username || `User ${msg.user_id}`}
+                    <span style={{ fontWeight: 'normal', color: '#000', marginLeft: 4 }}>:{' '}{msg.content}</span>
+                  </span>
                 );
               })}
-            </List>
-            <div ref={messagesEndRef} />
+              <div ref={messagesEndRef} />
+            </div>
           </ScrollView>
           <form onSubmit={sendMessage} style={{
             display: 'flex',
