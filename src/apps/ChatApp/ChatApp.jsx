@@ -160,7 +160,7 @@ function ChatApp() {
     <>
       <audio ref={imrcvRef} src="/imrcv.wav" preload="auto" />
       <audio ref={imsendRef} src="/imsend.wav" preload="auto" />
-      <WindowContent style={{ display: 'flex', flex: 1, overflow: 'hidden', width: '100%', height: '100%' }}>
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden', width: '100%', height: '100%' }}>
         {/* Online users sidebar */}
         <div style={{
           width: 140,
@@ -234,7 +234,7 @@ function ChatApp() {
             </Button>
           </form>
         </div>
-      </WindowContent>
+      </div>
     </>
   );
 }
