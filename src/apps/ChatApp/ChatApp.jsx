@@ -223,7 +223,7 @@ function ChatApp() {
               placeholder="Type a message..."
               disabled={!user || connectionStatus !== 'In chat room'}
               fullWidth
-              backgroundColor="#add6cb"
+              background="#add6cb"
             />
             <Button
               type="submit"
