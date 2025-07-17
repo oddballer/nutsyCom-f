@@ -40,7 +40,7 @@ function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, onTask
         >
           <pre
             style={{
-              color: '#9fbae0',
+              color: '#a08d73',
               fontFamily: 'monospace',
               fontSize: 18,
               textAlign: 'center',

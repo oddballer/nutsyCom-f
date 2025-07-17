@@ -27,7 +27,7 @@ const GlobalStyles = createGlobalStyle`
     font-family: 'ms_sans_serif';
   }
   body {
-    background: #9fe0c5;
+    background: #73a08d;
   }
 `;
 
