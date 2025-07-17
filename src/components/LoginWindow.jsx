@@ -90,7 +90,7 @@ const LoginWindow = ({ onClose }) => {
       alignItems: 'center',
       height: '100vh',
       width: '100vw',
-      background: '#f5f5f5',
+      background: 'teal',
       fontFamily: 'Arial, sans-serif'
     }}>
       <div style={{
