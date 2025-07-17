@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Window, WindowHeader, WindowContent, Button, TextInput, Fieldset, Text } from 'react95';
+import { Window, WindowHeader, WindowContent, Button, TextInput, Fieldset } from 'react95';
 import { useAuth } from '../contexts/AuthContext';
 
 const LoginWindow = ({ onClose }) => {
@@ -96,7 +96,7 @@ const LoginWindow = ({ onClose }) => {
         <form onSubmit={handleSubmit}>
           <Fieldset label={isLogin ? 'Login Information' : 'Account Information'}>
             <div style={{ marginBottom: 12 }}>
-              <Text>Username:</Text>
+              <label style={{ display: 'block', marginBottom: 2 }}>Username:</label>
               <TextInput
                 value={formData.username}
                 onChange={(e) => handleInputChange('username', e.target.value)}
@@ -108,7 +108,7 @@ const LoginWindow = ({ onClose }) => {
 
             {!isLogin && (
               <div style={{ marginBottom: 12 }}>
-                <Text>Email:</Text>
+                <label style={{ display: 'block', marginBottom: 2 }}>Email:</label>
                 <TextInput
                   type="email"
                   value={formData.email}
@@ -122,7 +122,7 @@ const LoginWindow = ({ onClose }) => {
 
             {!isLogin && (
               <div style={{ marginBottom: 12 }}>
-                <Text>Display Name (optional):</Text>
+                <label style={{ display: 'block', marginBottom: 2 }}>Display Name (optional):</label>
                 <TextInput
                   value={formData.display_name}
                   onChange={(e) => handleInputChange('display_name', e.target.value)}
@@ -134,7 +134,7 @@ const LoginWindow = ({ onClose }) => {
             )}
 
             <div style={{ marginBottom: 12 }}>
-              <Text>Password:</Text>
+              <label style={{ display: 'block', marginBottom: 2 }}>Password:</label>
               <TextInput
                 type="password"
                 value={formData.password}
@@ -147,7 +147,7 @@ const LoginWindow = ({ onClose }) => {
 
             {!isLogin && (
               <div style={{ marginBottom: 12 }}>
-                <Text>Confirm Password:</Text>
+                <label style={{ display: 'block', marginBottom: 2 }}>Confirm Password:</label>
                 <TextInput
                   type="password"
                   value={formData.confirmPassword}
