@@ -124,12 +124,6 @@ const LoginWindow = ({ onClose }) => {
             height: '100%',
             overflow: 'hidden'
           }}>
-            <Fieldset label={isLogin ? 'Login Information' : 'Account Information'} style={{
-              flex: 1,
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column'
-            }}>
               <div style={{
                 marginBottom: 12,
                 minHeight: 0,
