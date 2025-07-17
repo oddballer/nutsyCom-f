@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Button, MenuList, MenuListItem, Separator } from 'react95';
+import { useAuth } from '../contexts/AuthContext';
 
 function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   const formatTime = () => {
     const now = new Date();
@@ -15,11 +18,22 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
 
   const toggleStartMenu = () => {
     setStartMenuOpen(!startMenuOpen);
+    setUserMenuOpen(false); // Close user menu if open
+  };
+
+  const toggleUserMenu = () => {
+    setUserMenuOpen(!userMenuOpen);
+    setStartMenuOpen(false); // Close start menu if open
   };
 
   const handleWindowClick = (window) => {
     // If window is minimized, restore it; otherwise just focus it
     onWindowClick(window.id);
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    setUserMenuOpen(false);
   };
 
   return (
@@ -119,6 +133,58 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
           ))}
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {/* User Info */}
+          {user && (
+            <div style={{ position: 'relative', display: 'inline-block' }}>
+              <Button
+                onClick={toggleUserMenu}
+                active={userMenuOpen}
+                style={{ 
+                  height: 28,
+                  fontSize: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  padding: '0 8px'
+                }}
+              >
+                <span role='img' aria-label='👤' style={{ fontSize: '14px' }}>
+                  👤
+                </span>
+                {user.display_name || user.username}
+              </Button>
+              
+              {/* User Menu */}
+              {userMenuOpen && (
+                <MenuList
+                  style={{
+                    position: 'absolute',
+                    right: '0',
+                    bottom: '100%',
+                    width: 150,
+                    zIndex: 999
+                  }}
+                  onClick={() => setUserMenuOpen(false)}
+                >
+                  <MenuListItem>
+                    <span role='img' aria-label='👤' style={{ marginRight: 8 }}>
+                      👤
+                    </span>
+                    Profile
+                  </MenuListItem>
+                  <Separator />
+                  <MenuListItem onClick={handleLogout}>
+                    <span role='img' aria-label='🚪' style={{ marginRight: 8 }}>
+                      🚪
+                    </span>
+                    Logout
+                  </MenuListItem>
+                </MenuList>
+              )}
+            </div>
+          )}
+          
+          {/* Time */}
           <span style={{ fontSize: '12px', color: '#000000' }}>
             {formatTime()}
           </span>

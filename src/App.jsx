@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import { ThemeProvider } from 'react95';
+import original from 'react95/dist/themes/original';
 import Desktop from './components/Desktop';
 import WindowApp from './components/WindowApp';
 import ChatApp from './apps/ChatApp/ChatApp';
+import LoginWindow from './components/LoginWindow';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
 const initialWindows = [
   {
@@ -17,9 +21,11 @@ const initialWindows = [
   // Add more apps here
 ];
 
-function App() {
+function AppContent() {
   const [windows, setWindows] = useState(initialWindows);
   const [zCounter, setZCounter] = useState(2);
+  const [showLogin, setShowLogin] = useState(false);
+  const { user, loading } = useAuth();
 
   const openWindow = (id) => {
     setWindows(ws => ws.map(w =>
@@ -57,6 +63,47 @@ function App() {
     ));
   };
 
+  const handleLoginClose = () => {
+    setShowLogin(false);
+  };
+
+  // Show loading screen while checking authentication
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        background: '#008080'
+      }}>
+        <div style={{
+          background: '#c0c0c0',
+          border: '2px outset #c0c0c0',
+          padding: '20px',
+          textAlign: 'center'
+        }}>
+          <div>Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show login window if not authenticated
+  if (!user) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        background: '#008080'
+      }}>
+        <LoginWindow onClose={handleLoginClose} />
+      </div>
+    );
+  }
+
   return (
     <Desktop
       windows={windows}
@@ -82,6 +129,16 @@ function App() {
         </WindowApp>
       ))}
     </Desktop>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider theme={original}>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

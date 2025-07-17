@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
+import { useAuth } from '../../contexts/AuthContext';
+import { Button, Text } from 'react95';
 
 // Use environment variable for backend URL, fallback to localhost for development
 const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
 // Ensure no trailing slash for proper URL construction
 const BACKEND_URL = SOCKET_URL.endsWith('/') ? SOCKET_URL.slice(0, -1) : SOCKET_URL;
-const ROOM_ID = 1; // Example room, adjust as needed
-const USER_ID = Math.floor(Math.random() * 1000000); // Temporary user id for demo
+const ROOM_ID = 1; // General room
 
 // Debug logging
 console.log('Environment:', import.meta.env.MODE);
@@ -18,10 +19,17 @@ function ChatApp() {
   const [input, setInput] = useState('');
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [connectionStatus, setConnectionStatus] = useState('Connecting...');
+  const [authError, setAuthError] = useState('');
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const { user, token, logout } = useAuth();
 
   useEffect(() => {
+    if (!user || !token) {
+      setConnectionStatus('Not authenticated');
+      return;
+    }
+
     console.log('Attempting to connect to:', SOCKET_URL);
     
     // Connect to socket.io server
@@ -35,6 +43,23 @@ function ChatApp() {
     socket.on('connect', () => {
       console.log('Connected to backend');
       setConnectionStatus('Connected');
+      
+      // Authenticate the socket connection
+      socket.emit('authenticate', token);
+    });
+
+    socket.on('authenticated', (data) => {
+      console.log('Socket authenticated:', data);
+      setConnectionStatus('Authenticated');
+      
+      // Join room after authentication
+      socket.emit('joinRoom', ROOM_ID);
+    });
+
+    socket.on('authError', (error) => {
+      console.error('Socket authentication error:', error);
+      setAuthError(error.message);
+      setConnectionStatus('Authentication failed');
     });
 
     socket.on('connect_error', (error) => {
@@ -47,15 +72,21 @@ function ChatApp() {
       setConnectionStatus('Disconnected');
     });
 
-    // Join room
-    socket.emit('joinRoom', ROOM_ID);
-    socket.emit('userOnline', USER_ID);
+    socket.on('roomJoined', (data) => {
+      console.log('Joined room:', data);
+      setConnectionStatus('In chat room');
+    });
 
     // Fetch chat history - use the cleaned backend URL for API calls
     const apiUrl = `${BACKEND_URL}/api/rooms/${ROOM_ID}/messages`;
     console.log('Attempting to fetch from:', apiUrl);
     
-    fetch(apiUrl)
+    fetch(apiUrl, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
       .then(res => {
         console.log('API response status:', res.status);
         console.log('API response headers:', res.headers);
@@ -89,6 +120,12 @@ function ChatApp() {
       setConnectionStatus(`Error: ${error.message}`);
     });
 
+    // Listen for general errors
+    socket.on('error', (error) => {
+      console.error('Socket error:', error);
+      setConnectionStatus(`Error: ${error.message}`);
+    });
+
     // Listen for online users
     socket.on('onlineUsers', (users) => {
       setOnlineUsers(users);
@@ -97,7 +134,7 @@ function ChatApp() {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [user, token, SOCKET_URL, BACKEND_URL]);
 
   useEffect(() => {
     // Scroll to bottom on new message
@@ -108,10 +145,10 @@ function ChatApp() {
 
   const sendMessage = (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || !user) return;
     
     try {
-      const msg = { roomId: ROOM_ID, userId: USER_ID, content: input };
+      const msg = { roomId: ROOM_ID, content: input };
       console.log('Sending message:', msg);
       socketRef.current.emit('chatMessage', msg);
       setInput('');
@@ -120,6 +157,28 @@ function ChatApp() {
       setConnectionStatus('Send Error');
     }
   };
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  if (!user) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        alignItems: 'center', 
+        justifyContent: 'center',
+        height: '100%',
+        padding: 20,
+        textAlign: 'center'
+      }}>
+        <Text style={{ marginBottom: 16 }}>
+          Please log in to access the chat.
+        </Text>
+      </div>
+    );
+  }
 
   return (
     <div style={{ 
@@ -141,9 +200,29 @@ function ChatApp() {
         overflow: 'hidden',
         flexShrink: 0
       }}>
-        <b>Online Users</b>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+          <b>Online Users</b>
+          <Button size="sm" onClick={handleLogout}>
+            Logout
+          </Button>
+        </div>
         <div style={{ fontSize: '12px', color: 'gray', marginBottom: 8 }}>
           Status: {connectionStatus}
+        </div>
+        {authError && (
+          <div style={{ 
+            fontSize: '12px', 
+            color: '#d32f2f', 
+            marginBottom: 8,
+            padding: 4,
+            backgroundColor: '#ffebee',
+            border: '1px solid #f44336'
+          }}>
+            {authError}
+          </div>
+        )}
+        <div style={{ fontSize: '12px', color: 'blue', marginBottom: 8 }}>
+          Logged in as: {user.display_name || user.username}
         </div>
         <ul style={{ 
           listStyle: 'none', 
@@ -153,7 +232,11 @@ function ChatApp() {
           overflowY: 'auto'
         }}>
           {onlineUsers.map(uid => (
-            <li key={uid} style={{ color: uid === USER_ID ? 'blue' : 'black', fontWeight: uid === USER_ID ? 'bold' : 'normal' }}>
+            <li key={uid} style={{ 
+              color: uid === user.id ? 'blue' : 'black', 
+              fontWeight: uid === user.id ? 'bold' : 'normal',
+              fontSize: '12px'
+            }}>
               User {uid}
             </li>
           ))}
@@ -184,7 +267,7 @@ function ChatApp() {
               wordWrap: 'break-word',
               overflowWrap: 'break-word'
             }}>
-              <b>{msg.username || `User ${msg.user_id || msg.userId}`}:</b> {msg.content}
+              <b>{msg.display_name || msg.username || `User ${msg.user_id}`}:</b> {msg.content}
             </div>
           ))}
           <div ref={messagesEndRef} />
@@ -205,11 +288,16 @@ function ChatApp() {
               minWidth: 0
             }}
             placeholder="Type a message..."
+            disabled={!user || connectionStatus !== 'In chat room'}
           />
-          <button type="submit" style={{ 
-            minWidth: 60,
-            flexShrink: 0
-          }}>
+          <button 
+            type="submit" 
+            style={{ 
+              minWidth: 60,
+              flexShrink: 0
+            }}
+            disabled={!user || connectionStatus !== 'In chat room'}
+          >
             Send
           </button>
         </form>
