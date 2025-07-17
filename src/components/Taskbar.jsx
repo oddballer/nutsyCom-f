@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button } from 'react95';
+import { AppBar, Toolbar, Button, MenuList, MenuListItem, Separator } from 'react95';
 
 function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
@@ -17,42 +17,39 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
     setStartMenuOpen(!startMenuOpen);
   };
 
+  const handleWindowClick = (window) => {
+    // If window is minimized, restore it; otherwise just focus it
+    onWindowClick(window.id);
+  };
+
   return (
-    <>
-      <div style={{ 
-        position: 'fixed', 
-        bottom: 0, 
-        left: 0, 
-        right: 0, 
-        zIndex: 1000,
-        height: 36,
-        backgroundColor: '#c0c0c0',
-        borderTop: '2px solid #ffffff',
-        borderLeft: '2px solid #ffffff',
-        borderRight: '2px solid #808080',
-        borderBottom: '2px solid #808080'
+    <AppBar style={{ 
+      position: 'fixed', 
+      bottom: 0, 
+      left: 0, 
+      right: 0, 
+      zIndex: 1000,
+      height: 36
+    }}>
+      <Toolbar style={{ 
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        height: '100%',
+        padding: '0 4px'
       }}>
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          height: '100%',
-          padding: '0 4px'
-        }}>
-          <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-            {/* Start Button */}
-            <div
+        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+          {/* Start Button */}
+          <div style={{ position: 'relative', display: 'inline-block' }}>
+            <Button
               onClick={toggleStartMenu}
+              active={startMenuOpen}
               style={{ 
                 height: 28,
+                fontWeight: 'bold',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 4,
-                padding: '0 8px',
-                backgroundColor: '#c0c0c0',
-                border: '2px outset #c0c0c0',
-                cursor: 'pointer',
-                userSelect: 'none'
+                padding: '0 8px'
               }}
             >
               <img 
@@ -64,89 +61,69 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
                   objectFit: 'contain'
                 }}
               />
-              <span style={{ fontSize: '12px', fontWeight: 'bold' }}>Start</span>
-            </div>
+              Start
+            </Button>
             
-            {/* Window Buttons */}
-            {openWindows.map(window => (
-              <Button
-                key={window.id}
-                onClick={() => onWindowClick(window.id)}
-                style={{ 
-                  minWidth: 120,
-                  height: 28,
-                  fontSize: '12px'
+            {/* Start Menu */}
+            {startMenuOpen && (
+              <MenuList
+                style={{
+                  position: 'absolute',
+                  left: '0',
+                  bottom: '100%',
+                  width: 200,
+                  zIndex: 999
                 }}
+                onClick={() => setStartMenuOpen(false)}
               >
-                {window.title}
-              </Button>
-            ))}
+                <MenuListItem>
+                  <img 
+                    src="/user_world-1.png" 
+                    alt="Chat"
+                    style={{ 
+                      width: 16, 
+                      height: 16,
+                      objectFit: 'contain',
+                      marginRight: 8
+                    }}
+                  />
+                  Chat
+                </MenuListItem>
+                <Separator />
+                <MenuListItem>
+                  <span role='img' aria-label='🔙' style={{ marginRight: 8 }}>
+                    🔙
+                  </span>
+                  Shut Down...
+                </MenuListItem>
+              </MenuList>
+            )}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: '12px', color: '#000000' }}>
-              {formatTime()}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Start Menu */}
-      {startMenuOpen && (
-        <div style={{
-          position: 'fixed',
-          bottom: 36,
-          left: 4,
-          width: 200,
-          backgroundColor: '#c0c0c0',
-          border: '2px outset #c0c0c0',
-          zIndex: 999,
-          padding: '4px'
-        }}>
-          <div style={{
-            backgroundColor: '#000080',
-            color: 'white',
-            padding: '8px',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            marginBottom: '4px'
-          }}>
-            NutsyCom
-          </div>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '4px 8px',
-            cursor: 'pointer',
-            fontSize: '12px'
-          }}>
-            <img 
-              src="/user_world-1.png" 
-              alt="Chat"
+          
+          {/* Window Buttons */}
+          {openWindows.map(window => (
+            <Button
+              key={window.id}
+              onClick={() => handleWindowClick(window)}
               style={{ 
-                width: 16, 
-                height: 16,
-                objectFit: 'contain'
+                minWidth: 120,
+                height: 28,
+                fontSize: '12px',
+                backgroundColor: window.isMinimized ? '#808080' : '#c0c0c0',
+                color: window.isMinimized ? '#ffffff' : '#000000'
               }}
-            />
-            <span>Chat</span>
-          </div>
-          <div style={{
-            borderTop: '1px solid #808080',
-            marginTop: '4px',
-            paddingTop: '4px'
-          }}>
-            <div style={{
-              padding: '4px 8px',
-              cursor: 'pointer',
-              fontSize: '12px'
-            }}>
-              Shut Down...
-            </div>
-          </div>
+            >
+              {window.title}
+            </Button>
+          ))}
         </div>
-      )}
-    </>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: '12px', color: '#000000' }}>
+            {formatTime()}
+          </span>
+        </div>
+      </Toolbar>
+    </AppBar>
   );
 }
 

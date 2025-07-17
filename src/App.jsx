@@ -44,7 +44,9 @@ function App() {
 
   const focusWindow = (id) => {
     setWindows(ws => ws.map(w =>
-      w.id === id ? { ...w, zIndex: zCounter } : w
+      w.id === id 
+        ? { ...w, zIndex: zCounter, isMinimized: false } // Restore if minimized
+        : w
     ));
     setZCounter(z => z + 1);
   };
