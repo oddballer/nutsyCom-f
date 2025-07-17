@@ -174,12 +174,12 @@ function ChatApp() {
           }}>
             {onlineUsers.map(u => (
               <li key={u.id} style={{
-                color: u.id === user.id ? 'blue' : 'black',
-                fontWeight: u.id === user.id ? 'bold' : 'normal',
+                color: 'inherit',
+                fontWeight: 'bold',
                 fontSize: '12px',
                 padding: '2px 0'
               }}>
-                {u.display_name}
+                <span style={{ fontWeight: 'bold', color: u.id === user.id ? 'blue' : 'red' }}>{u.display_name}</span>
               </li>
             ))}
           </ul>
@@ -204,15 +204,18 @@ function ChatApp() {
           wordWrap: 'break-word',
           overflowWrap: 'break-word'
         }}>
-          {messages.map((msg, idx) => (
-            <div key={idx} style={{
-              marginBottom: 4,
-              wordWrap: 'break-word',
-              overflowWrap: 'break-word'
-            }}>
-              <b>{msg.display_name || msg.username || `User ${msg.user_id}`}:</b> {msg.content}
-            </div>
-          ))}
+          {messages.map((msg, idx) => {
+            const isCurrentUser = msg.user_id === user.id || msg.id === user.id;
+            return (
+              <div key={idx} style={{
+                marginBottom: 4,
+                wordWrap: 'break-word',
+                overflowWrap: 'break-word'
+              }}>
+                <span style={{ fontWeight: 'bold', color: isCurrentUser ? 'blue' : 'red' }}>{msg.display_name || msg.username || `User ${msg.user_id}`}</span>: {msg.content}
+              </div>
+            );
+          })}
           <div ref={messagesEndRef} />
         </div>
         <form onSubmit={sendMessage} style={{
