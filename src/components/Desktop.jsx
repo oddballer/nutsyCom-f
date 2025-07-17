@@ -63,8 +63,8 @@ function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, onTask
           <pre
             style={{
               color: '#fff',
-              fontFamily: 'ms_sans_serif, monospace',
-              fontSize: 15,
+              fontFamily: 'monospace',
+              fontSize: 18,
               textAlign: 'center',
               userSelect: 'none',
               cursor: 'default',
