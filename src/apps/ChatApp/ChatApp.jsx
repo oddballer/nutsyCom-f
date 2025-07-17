@@ -167,19 +167,18 @@ function ChatApp() {
           minWidth: 140,
           background: 'transparent',
           borderRight: '1px solid #ccc',
-          padding: 8,
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
           flexShrink: 0
         }}>
-          <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: 4 }}>
-            Online Users:
+          <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: 4, alignSelf: 'center' }}>
+            Online Users
           </div>
           <ScrollView style={{ flex: 1, minHeight: 0, background: '#cec0ad', border: 'none', padding: 0, margin: 0 }}>
             <div>
               {onlineUsers.map(u => (
-                <span key={u.id} style={{ display: 'block', padding: '2px 0', fontWeight: 'bold', fontSize: '12px', color: u.id === user.id ? 'blue' : 'red' }}>
+                <span key={u.id} style={{ display: 'block', padding: '2px 0', alignSelf: 'center', fontWeight: 'bold', fontSize: '12px', color: u.id === user.id ? 'blue' : 'red' }}>
                   {u.display_name}
                 </span>
               ))}
