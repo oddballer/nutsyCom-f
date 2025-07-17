@@ -160,7 +160,7 @@ function ChatApp() {
     <>
       <audio ref={imrcvRef} src="/imrcv.wav" preload="auto" />
       <audio ref={imsendRef} src="/imsend.wav" preload="auto" />
-      <WindowContent style={{ display: 'flex', flex: 1, overflow: 'hidden', width: '100%', height: '100%', padding: 0 }}>
+      <WindowContent style={{ display: 'flex', flex: 1, overflow: 'hidden', width: '100%', height: '100%' }}>
         {/* Online users sidebar */}
         <div style={{
           width: 140,
@@ -223,6 +223,7 @@ function ChatApp() {
               placeholder="Type a message..."
               disabled={!user || connectionStatus !== 'In chat room'}
               fullWidth
+              backgroundColor="#add6cb"
             />
             <Button
               type="submit"
