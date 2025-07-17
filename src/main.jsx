@@ -25,6 +25,9 @@ const GlobalStyles = createGlobalStyle`
   body, input, select, textarea {
     font-family: 'ms_sans_serif';
   }
+  body {
+    background: teal;
+  }
 `;
 
 createRoot(document.getElementById('root')).render(
