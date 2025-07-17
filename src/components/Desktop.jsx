@@ -23,6 +23,21 @@ const icons = [
   // Add more icons here
 ];
 
+// ASCII art for desktop background
+const asciiArt = `
+      ___           ___                       ___                 
+     /__/\         /__/\          ___        /  /\          ___   
+     \  \:\        \  \:\        /  /\      /  /:/_        /__/|  
+      \  \:\        \  \:\      /  /:/     /  /:/ /\      |  |:|  
+  _____\__\:\   ___  \  \:\    /  /:/     /  /:/ /::\     |  |:|  
+ /__/::::::::\ /__/\  \__\:\  /  /::\    /__/:/ /:/\:\  __|__|:|  
+ \  \:\~~\~~\/ \  \:\ /  /:/ /__/:/\:\   \  \:\/:/~/:/ /__/::::\  
+  \  \:\  ~~~   \  \:\  /:/  \__\/  \:\   \  \::/ /:/     ~\~~\:\ 
+   \  \:\        \  \:\/:/        \  \:\   \__/\ /:/        \  \:\
+    \  \:\        \  \::/          \__/\/     /__/:/          \__\/
+     \__/\/         \__/\/                     \__/\/                
+`;
+
 function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, onTaskbarButtonClick, children }) {
   const openWindows = windows.filter(w => w.isOpen && !w.isMinimized);
 
@@ -30,6 +45,36 @@ function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, onTask
     <ThemeProvider theme={original}>
       <GlobalStyles />
       <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}>
+        {/* ASCII Art Background */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none',
+            zIndex: 0
+          }}
+        >
+          <pre
+            style={{
+              color: '#fff',
+              fontFamily: 'monospace',
+              fontSize: 18,
+              textAlign: 'center',
+              userSelect: 'none',
+              cursor: 'default',
+              margin: 0
+            }}
+            aria-hidden="true"
+          >
+            {asciiArt}
+          </pre>
+        </div>
         <div style={{ position: 'absolute', left: 40, top: 40, display: 'flex', flexDirection: 'column', gap: 32 }}>
           {icons.map(icon => (
             <DesktopIcon
