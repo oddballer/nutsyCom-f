@@ -145,7 +145,7 @@ const LoginWindow = ({ onClose }) => {
                 borderRadius: '4px',
                 fontSize: '14px',
                 boxSizing: 'border-box',
-                backgroundColor: loading ? '#f5f5f5' : '#ffffff'
+                backgroundColor: loading ? '#f5f5f5' : 'gray'
               }}
             />
           </div>
@@ -174,7 +174,7 @@ const LoginWindow = ({ onClose }) => {
                   borderRadius: '4px',
                   fontSize: '14px',
                   boxSizing: 'border-box',
-                  backgroundColor: loading ? '#f5f5f5' : '#ffffff'
+                  backgroundColor: loading ? '#f5f5f5' : 'gray'
                 }}
               />
             </div>
@@ -204,7 +204,7 @@ const LoginWindow = ({ onClose }) => {
                   borderRadius: '4px',
                   fontSize: '14px',
                   boxSizing: 'border-box',
-                  backgroundColor: loading ? '#f5f5f5' : '#ffffff'
+                  backgroundColor: loading ? '#f5f5f5' : 'gray'
                 }}
               />
             </div>
@@ -233,7 +233,7 @@ const LoginWindow = ({ onClose }) => {
                 borderRadius: '4px',
                 fontSize: '14px',
                 boxSizing: 'border-box',
-                backgroundColor: loading ? '#f5f5f5' : '#ffffff'
+                backgroundColor: loading ? '#f5f5f5' : 'gray'
               }}
             />
           </div>
@@ -262,7 +262,7 @@ const LoginWindow = ({ onClose }) => {
                   borderRadius: '4px',
                   fontSize: '14px',
                   boxSizing: 'border-box',
-                  backgroundColor: loading ? '#f5f5f5' : '#ffffff'
+                  backgroundColor: loading ? '#f5f5f5' : 'gray'
                 }}
               />
             </div>
