@@ -94,7 +94,7 @@ const LoginWindow = ({ onClose }) => {
       fontFamily: 'Arial, sans-serif'
     }}>
       <div style={{
-        background: '#ffffff',
+        background: 'gray',
         padding: '40px',
         borderRadius: 8,
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
