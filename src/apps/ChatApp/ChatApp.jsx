@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from '../../contexts/AuthContext';
-import { Button, TextInput } from 'react95';
+import { Button, TextInput, List, ListItem, ScrollView } from 'react95';
 
 // Use environment variable for backend URL, fallback to localhost for development
 const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
@@ -182,24 +182,15 @@ function ChatApp() {
           <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: 4 }}>
             Online Users:
           </div>
-          <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
-            <ul style={{
-              listStyle: 'none',
-              padding: 0,
-              margin: 0
-            }}>
+          <ScrollView style={{ flex: 1, minHeight: 0, background: 'transparent', border: 'none', padding: 0, margin: 0 }}>
+            <List style={{ background: 'transparent', border: 'none', padding: 0, margin: 0 }}>
               {onlineUsers.map(u => (
-                <li key={u.id} style={{
-                  color: 'inherit',
-                  fontWeight: 'bold',
-                  fontSize: '12px',
-                  padding: '2px 0'
-                }}>
+                <ListItem key={u.id} style={{ padding: '2px 0', fontWeight: 'bold', fontSize: '12px', background: 'transparent', border: 'none' }}>
                   <span style={{ fontWeight: 'bold', color: u.id === user.id ? 'blue' : 'red' }}>{u.display_name}</span>
-                </li>
+                </ListItem>
               ))}
-            </ul>
-          </div>
+            </List>
+          </ScrollView>
         </div>
         {/* Chat area */}
         <div style={{
@@ -210,30 +201,19 @@ function ChatApp() {
           minWidth: 0,
           minHeight: 0
         }}>
-          <div style={{
-            flex: 1,
-            overflowY: 'auto',
-            background: '#fff',
-            padding: 8,
-            border: '1px solid #ccc',
-            minHeight: 0,
-            wordWrap: 'break-word',
-            overflowWrap: 'break-word'
-          }}>
-            {messages.map((msg, idx) => {
-              const isCurrentUser = msg.user_id === user.id || msg.id === user.id;
-              return (
-                <div key={idx} style={{
-                  marginBottom: 4,
-                  wordWrap: 'break-word',
-                  overflowWrap: 'break-word'
-                }}>
-                  <span style={{ fontWeight: 'bold', color: isCurrentUser ? 'blue' : 'red' }}>{msg.display_name || msg.username || `User ${msg.user_id}`}</span>: {msg.content}
-                </div>
-              );
-            })}
+          <ScrollView style={{ flex: 1, background: '#fff', border: '1px solid #ccc', padding: 8, minHeight: 0, wordWrap: 'break-word', overflowWrap: 'break-word' }}>
+            <List style={{ background: 'transparent', border: 'none', padding: 0, margin: 0 }}>
+              {messages.map((msg, idx) => {
+                const isCurrentUser = msg.user_id === user.id || msg.id === user.id;
+                return (
+                  <ListItem key={idx} style={{ background: 'transparent', border: 'none', padding: '2px 0', marginBottom: 2, wordWrap: 'break-word', overflowWrap: 'break-word' }}>
+                    <span style={{ fontWeight: 'bold', color: isCurrentUser ? 'blue' : 'red' }}>{msg.display_name || msg.username || `User ${msg.user_id}`}</span>: {msg.content}
+                  </ListItem>
+                );
+              })}
+            </List>
             <div ref={messagesEndRef} />
-          </div>
+          </ScrollView>
           <form onSubmit={sendMessage} style={{
             display: 'flex',
             gap: 8,
