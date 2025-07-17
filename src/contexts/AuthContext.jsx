@@ -17,8 +17,6 @@ export const AuthProvider = ({ children }) => {
 
   // Ensure BACKEND_URL doesn't have trailing slash
   const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000').replace(/\/$/, '');
-  console.log('Backend URL:', BACKEND_URL);
-  console.log('VITE_BACKEND_URL env var:', import.meta.env.VITE_BACKEND_URL);
 
   // Check if user is authenticated on app load
   useEffect(() => {
@@ -55,7 +53,6 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       const url = `${BACKEND_URL}/api/auth/login`;
-      console.log('Login URL:', url);
       
       const response = await fetch(url, {
         method: 'POST',
@@ -65,7 +62,6 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ username, password })
       });
 
-      console.log('Login response status:',response.status);
       
       if (!response.ok) {
         const errorText = await response.text();
