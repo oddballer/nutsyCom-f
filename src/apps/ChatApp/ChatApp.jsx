@@ -17,6 +17,8 @@ function ChatApp() {
   const [authError, setAuthError] = useState('');
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const imrcvRef = useRef(null);
+  const imsendRef = useRef(null);
   const { user, token } = useAuth();
 
   useEffect(() => {
@@ -83,7 +85,14 @@ function ChatApp() {
 
     // Listen for new messages
     socket.on('chatMessage', (msg) => {
-      setMessages(prev => [...prev, msg]);
+      setMessages(prev => {
+        // Play sound if message is from another user
+        if ((msg.user_id !== user.id && msg.id !== user.id) && imrcvRef.current) {
+          imrcvRef.current.currentTime = 0;
+          imrcvRef.current.play();
+        }
+        return [...prev, msg];
+      });
     });
 
     // Listen for chat errors
@@ -120,6 +129,10 @@ function ChatApp() {
       const msg = { roomId: ROOM_ID, content: input };
       socketRef.current.emit('chatMessage', msg);
       setInput('');
+      if (imsendRef.current) {
+        imsendRef.current.currentTime = 0;
+        imsendRef.current.play();
+      }
     } catch (error) {
       setConnectionStatus('Send Error');
     }
@@ -144,105 +157,109 @@ function ChatApp() {
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      flex: 1,
-      overflow: 'hidden',
-      width: '100%',
-      height: '100%'
-    }}>
-      {/* Online users sidebar */}
+    <>
+      <audio ref={imrcvRef} src="/imrcv.wav" preload="auto" />
+      <audio ref={imsendRef} src="/imsend.wav" preload="auto" />
       <div style={{
-        width: 140,
-        minWidth: 140,
-        background: '#f0f0f0',
-        borderRight: '1px solid #ccc',
-        padding: 8,
         display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        flexShrink: 0
-      }}>
-        <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: 4 }}>
-          Online Users:
-        </div>
-        <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
-          <ul style={{
-            listStyle: 'none',
-            padding: 0,
-            margin: 0
-          }}>
-            {onlineUsers.map(u => (
-              <li key={u.id} style={{
-                color: 'inherit',
-                fontWeight: 'bold',
-                fontSize: '12px',
-                padding: '2px 0'
-              }}>
-                <span style={{ fontWeight: 'bold', color: u.id === user.id ? 'blue' : 'red' }}>{u.display_name}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-      {/* Chat area */}
-      <div style={{
         flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
         overflow: 'hidden',
-        minWidth: 0,
-        minHeight: 0
+        width: '100%',
+        height: '100%'
       }}>
+        {/* Online users sidebar */}
+        <div style={{
+          width: 140,
+          minWidth: 140,
+          background: '#f0f0f0',
+          borderRight: '1px solid #ccc',
+          padding: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          flexShrink: 0
+        }}>
+          <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: 4 }}>
+            Online Users:
+          </div>
+          <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+            <ul style={{
+              listStyle: 'none',
+              padding: 0,
+              margin: 0
+            }}>
+              {onlineUsers.map(u => (
+                <li key={u.id} style={{
+                  color: 'inherit',
+                  fontWeight: 'bold',
+                  fontSize: '12px',
+                  padding: '2px 0'
+                }}>
+                  <span style={{ fontWeight: 'bold', color: u.id === user.id ? 'blue' : 'red' }}>{u.display_name}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        {/* Chat area */}
         <div style={{
           flex: 1,
-          overflowY: 'auto',
-          background: '#fff',
-          padding: 8,
-          border: '1px solid #ccc',
-          minHeight: 0,
-          wordWrap: 'break-word',
-          overflowWrap: 'break-word'
-        }}>
-          {messages.map((msg, idx) => {
-            const isCurrentUser = msg.user_id === user.id || msg.id === user.id;
-            return (
-              <div key={idx} style={{
-                marginBottom: 4,
-                wordWrap: 'break-word',
-                overflowWrap: 'break-word'
-              }}>
-                <span style={{ fontWeight: 'bold', color: isCurrentUser ? 'blue' : 'red' }}>{msg.display_name || msg.username || `User ${msg.user_id}`}</span>: {msg.content}
-              </div>
-            );
-          })}
-          <div ref={messagesEndRef} />
-        </div>
-        <form onSubmit={sendMessage} style={{
           display: 'flex',
-          gap: 8,
-          flexShrink: 0,
-          minHeight: 40,
-          marginTop: 8
+          flexDirection: 'column',
+          overflow: 'hidden',
+          minWidth: 0,
+          minHeight: 0
         }}>
-          <TextInput
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            style={{ flex: 1, minWidth: 0 }}
-            placeholder="Type a message..."
-            disabled={!user || connectionStatus !== 'In chat room'}
-            fullWidth
-          />
-          <Button
-            type="submit"
-            style={{ minWidth: 60, flexShrink: 0 }}
-            disabled={!user || connectionStatus !== 'In chat room'}
-          >
-            Send
-          </Button>
-        </form>
+          <div style={{
+            flex: 1,
+            overflowY: 'auto',
+            background: '#fff',
+            padding: 8,
+            border: '1px solid #ccc',
+            minHeight: 0,
+            wordWrap: 'break-word',
+            overflowWrap: 'break-word'
+          }}>
+            {messages.map((msg, idx) => {
+              const isCurrentUser = msg.user_id === user.id || msg.id === user.id;
+              return (
+                <div key={idx} style={{
+                  marginBottom: 4,
+                  wordWrap: 'break-word',
+                  overflowWrap: 'break-word'
+                }}>
+                  <span style={{ fontWeight: 'bold', color: isCurrentUser ? 'blue' : 'red' }}>{msg.display_name || msg.username || `User ${msg.user_id}`}</span>: {msg.content}
+                </div>
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </div>
+          <form onSubmit={sendMessage} style={{
+            display: 'flex',
+            gap: 8,
+            flexShrink: 0,
+            minHeight: 40,
+            marginTop: 8
+          }}>
+            <TextInput
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              style={{ flex: 1, minWidth: 0 }}
+              placeholder="Type a message..."
+              disabled={!user || connectionStatus !== 'In chat room'}
+              fullWidth
+            />
+            <Button
+              type="submit"
+              style={{ minWidth: 60, flexShrink: 0 }}
+              disabled={!user || connectionStatus !== 'In chat room'}
+            >
+              Send
+            </Button>
+          </form>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
