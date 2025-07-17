@@ -29,6 +29,22 @@ const GlobalStyles = createGlobalStyle`
   body {
     background: #73a08d;
   }
+  
+  // Scrollbar overrides
+  /* For Chrome, Edge, Safari */
+  .chat-messages-scroll::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+  }
+  .chat-messages-scroll::-webkit-scrollbar-thumb {
+    background: transparent;
+  }
+
+  /* For Firefox */
+  .chat-messages-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
 `;
 
 createRoot(document.getElementById('root')).render(
