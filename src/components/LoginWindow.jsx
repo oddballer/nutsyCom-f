@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Window, WindowHeader, WindowContent, Button, TextInput } from 'react95';
 import { useAuth } from '../contexts/AuthContext';
 
 const LoginWindow = ({ onClose }) => {
@@ -91,241 +92,85 @@ const LoginWindow = ({ onClose }) => {
       height: '100vh',
       width: '100vw',
       background: 'teal',
-      fontFamily: 'Arial, sans-serif'
     }}>
-      <div style={{
-        background: 'gray',
-        padding: '40px',
-        borderRadius: 8,
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        width: '350px',
-        maxWidth: '90%'
-      }}>
-        <div style={{
-          textAlign: 'center',
-          marginBottom: '30px'
-        }}>
-          <h2 style={{
-            margin: '0 0 10px 0',
-            color: '#333333',
-            fontSize: '24px'
-          }}>
-            {isLogin ? 'Login' : 'Register'}
-          </h2>
-          <p style={{
-            margin: '0',
-            color: '#666666',
-            fontSize: '14px'
-          }}>
-            {isLogin ? 'Welcome back!' : 'Create your account'}
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              color: '#333333',
-              fontSize: '14px',
-              fontWeight: 500
-            }}>
-              Username
-            </label>
-            <input
-              type="text"
+      <Window style={{ minWidth: 340, maxWidth: '90vw' }}>
+        <WindowHeader>
+          <span>{isLogin ? 'Login' : 'Register'}</span>
+        </WindowHeader>
+        <WindowContent>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <TextInput
               value={formData.username}
-              onChange={(e) => handleInputChange('username', e.target.value)}
-              placeholder="Enter username"
+              onChange={e => handleInputChange('username', e.target.value)}
+              placeholder="Username"
               disabled={loading}
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #cccccc',
-                borderRadius: '4px',
-                fontSize: '14px',
-                boxSizing: 'border-box',
-                backgroundColor: loading ? '#f5f5f5' : 'gray'
-              }}
+              fullWidth
+              style={{ marginBottom: 8 }}
             />
-          </div>
-
-          {!isLogin && (
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                color: '#333333',
-                fontSize: '14px',
-                fontWeight: '500'
-              }}>
-                Email
-              </label>
-              <input
-                type="email"
+            {!isLogin && (
+              <TextInput
                 value={formData.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
-                placeholder="Enter email"
+                onChange={e => handleInputChange('email', e.target.value)}
+                placeholder="Email"
                 disabled={loading}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  border: '1px solid #cccccc',
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  boxSizing: 'border-box',
-                  backgroundColor: loading ? '#f5f5f5' : 'gray'
-                }}
+                fullWidth
+                style={{ marginBottom: 8 }}
               />
-            </div>
-          )}
-
-          {!isLogin && (
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                color: '#333333',
-                fontSize: '14px',
-                fontWeight: '500'
-              }}>
-                Display Name (optional)
-              </label>
-              <input
-                type="text"
+            )}
+            {!isLogin && (
+              <TextInput
                 value={formData.display_name}
-                onChange={(e) => handleInputChange('display_name', e.target.value)}
-                placeholder="Enter display name"
+                onChange={e => handleInputChange('display_name', e.target.value)}
+                placeholder="Display Name (optional)"
                 disabled={loading}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  border: '1px solid #cccccc',
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  boxSizing: 'border-box',
-                  backgroundColor: loading ? '#f5f5f5' : 'gray'
-                }}
+                fullWidth
+                style={{ marginBottom: 8 }}
               />
-            </div>
-          )}
-
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{
-              display: 'block',
-              marginBottom: '8px',
-              color: '#333333',
-              fontSize: '14px',
-              fontWeight: 500
-            }}>
-              Password
-            </label>
-            <input
+            )}
+            <TextInput
               type="password"
               value={formData.password}
-              onChange={(e) => handleInputChange('password', e.target.value)}
-              placeholder="Enter password"
+              onChange={e => handleInputChange('password', e.target.value)}
+              placeholder="Password"
               disabled={loading}
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #cccccc',
-                borderRadius: '4px',
-                fontSize: '14px',
-                boxSizing: 'border-box',
-                backgroundColor: loading ? '#f5f5f5' : 'gray'
-              }}
+              fullWidth
+              style={{ marginBottom: 8 }}
             />
-          </div>
-
-          {!isLogin && (
-            <div style={{ marginBottom: '20px' }}>
-              <label style={{
-                display: 'block',
-                marginBottom: '8px',
-                color: '#333333',
-                fontSize: '14px',
-                fontWeight: '500'
-              }}>
-                Confirm Password
-              </label>
-              <input
+            {!isLogin && (
+              <TextInput
                 type="password"
                 value={formData.confirmPassword}
-                onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                placeholder="Confirm password"
+                onChange={e => handleInputChange('confirmPassword', e.target.value)}
+                placeholder="Confirm Password"
                 disabled={loading}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  border: '1px solid #cccccc',
-                  borderRadius: '4px',
-                  fontSize: '14px',
-                  boxSizing: 'border-box',
-                  backgroundColor: loading ? '#f5f5f5' : 'gray'
-                }}
+                fullWidth
+                style={{ marginBottom: 8 }}
               />
+            )}
+            {error && (
+              <div style={{
+                marginBottom: 8,
+                padding: 8,
+                background: '#f8d7da',
+                border: '1px solid #f5c6cb',
+                borderRadius: 4,
+                color: '#721c24',
+                fontSize: 13
+              }}>
+                {error}
+              </div>
+            )}
+            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+              <Button type="submit" disabled={loading} style={{ flex: 1 }}>
+                {loading ? 'Please wait...' : (isLogin ? 'Login' : 'Register')}
+              </Button>
+              <Button type="button" onClick={toggleMode} disabled={loading} style={{ flex: 1 }}>
+                {isLogin ? 'Register' : 'Login'}
+              </Button>
             </div>
-          )}
-
-          {error && (
-            <div style={{
-              marginBottom: '20px',
-              padding: '12px',
-              backgroundColor: '#f8d7da',
-              border: '1px solid #f5c6cb',
-              borderRadius: '4px',
-              color: '#721c24',
-              fontSize: 14
-            }}>
-              {error}
-            </div>
-          )}
-
-          <div style={{
-            display: 'flex',
-            gap: '12px',
-            marginBottom: '20px'
-          }}>
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                flex: 1,
-                padding: '12px',
-                backgroundColor: '#666666',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '4px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.6 : 1
-              }}
-            >
-              {loading ? 'Please wait...' : (isLogin ? 'Login' : 'Register')}
-            </button>
-            <button
-              type="button"
-              onClick={toggleMode}
-              disabled={loading}
-              style={{
-                padding: '12px 16px',
-                backgroundColor: '#ffffff',
-                color: '#666666',
-                border: '1px solid #cccccc',
-                borderRadius: '4px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.6 : 1
-              }}
-            >
-              {isLogin ? 'Register' : 'Login'}
-            </button>
-          </div>
-        </form>
-      </div>
+          </form>
+        </WindowContent>
+      </Window>
     </div>
   );
 };
