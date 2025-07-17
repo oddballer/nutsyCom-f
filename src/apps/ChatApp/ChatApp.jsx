@@ -176,7 +176,7 @@ function ChatApp() {
           <div style={{ fontSize: '13px', fontWeight: 'bold', marginBottom: 4 }}>
             Online Users:
           </div>
-          <ScrollView style={{ flex: 1, minHeight: 0, background: 'transparent', border: 'none', padding: 0, margin: 0 }}>
+          <ScrollView style={{ flex: 1, minHeight: 0, background: '#cec0ad', border: 'none', padding: 0, margin: 0 }}>
             <div>
               {onlineUsers.map(u => (
                 <span key={u.id} style={{ display: 'block', padding: '2px 0', fontWeight: 'bold', fontSize: '12px', color: u.id === user.id ? 'blue' : 'red' }}>
@@ -195,7 +195,7 @@ function ChatApp() {
           minWidth: 0,
           minHeight: 0
         }}>
-          <ScrollView style={{ flex: 1, background: 'transparent', border: '1px solid #ccc', padding: 8, minHeight: 0, wordWrap: 'break-word', overflowWrap: 'break-word' }}>
+          <ScrollView style={{ flex: 1, background: '#cec0ad', border: '1px solid #ccc', padding: 8, minHeight: 0, wordWrap: 'break-word', overflowWrap: 'break-word' }}>
             <div>
               {messages.map((msg, idx) => {
                 const isCurrentUser = msg.user_id === user.id || msg.id === user.id;
