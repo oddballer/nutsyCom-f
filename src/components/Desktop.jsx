@@ -37,13 +37,12 @@ function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, onTask
             top: 0,
             left: 0,
             width: '100vw',
-            height: '100vh',
+            height: 'calc(100vh - 36px)', // Subtract taskbar height
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             pointerEvents: 'none',
             zIndex: 0,
-            paddingBottom: 36 // Height of the taskbar
           }}
         >
           <pre
