@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { AppBar, Toolbar, Button, MenuList, MenuListItem, Separator } from 'react95';
 import { useAuth } from '../contexts/AuthContext';
 
-function Taskbar({ windows, onWindowClick, onMinimize, onClose }) {
+function Taskbar({ windows, onWindowClick, onMinimize, onClose, onTaskbarButtonClick }) {
   const [startMenuOpen, setStartMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { user, logout } = useAuth();
@@ -27,8 +27,11 @@ function Taskbar({ windows, onWindowClick, onMinimize, onClose }) {
   };
 
   const handleWindowClick = (window) => {
-    // If window is minimized, restore it; otherwise just focus it
-    onWindowClick(window.id);
+    if (onTaskbarButtonClick) {
+      onTaskbarButtonClick(window.id);
+    } else {
+      onWindowClick(window.id);
+    }
   };
 
   const handleLogout = async () => {

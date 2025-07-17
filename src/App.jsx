@@ -65,6 +65,16 @@ function AppContent() {
     setShowLogin(false);
   };
 
+  // Toggle minimize/restore when clicking taskbar button
+  const toggleMinimizeWindow = (id) => {
+    setWindows(ws => ws.map(w =>
+      w.id === id
+        ? { ...w, isMinimized: !w.isMinimized, isOpen: true, zIndex: !w.isMinimized ? zCounter : w.zIndex }
+        : w
+    ));
+    setZCounter(z => z + 1);
+  };
+
   // Show loading screen while checking authentication
   if (loading) {
     return (
@@ -108,6 +118,7 @@ function AppContent() {
       onIconDoubleClick={openWindow}
       onWindowClick={focusWindow}
       onMinimize={minimizeWindow}
+      onTaskbarButtonClick={toggleMinimizeWindow}
     >
       {windows.filter(w => w.isOpen).map(w => (
         <WindowApp

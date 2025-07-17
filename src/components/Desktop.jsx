@@ -23,7 +23,7 @@ const icons = [
   // Add more icons here
 ];
 
-function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, children }) {
+function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, onTaskbarButtonClick, children }) {
   const openWindows = windows.filter(w => w.isOpen && !w.isMinimized);
 
   return (
@@ -46,6 +46,7 @@ function Desktop({ windows, onIconDoubleClick, onWindowClick, onMinimize, childr
           windows={windows}
           onWindowClick={onWindowClick}
           onMinimize={onMinimize}
+          onTaskbarButtonClick={onTaskbarButtonClick}
         />
       </div>
     </ThemeProvider>
