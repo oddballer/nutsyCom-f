@@ -28,6 +28,7 @@ function Taskbar({ openWindows, onWindowClick, onMinimize, onClose }) {
       bottom: 0, 
       left: 0, 
       right: 0, 
+      top: 'auto',
       zIndex: 1000,
       height: 36
     }}>
