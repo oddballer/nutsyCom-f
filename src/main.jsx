@@ -5,6 +5,7 @@ import { createGlobalStyle, ThemeProvider } from 'styled-components';
 import App from './App.jsx'
 
 import original from 'react95/dist/themes/original';
+import rose from 'react95/dist/themes/rose';
 import ms_sans_serif from 'react95/dist/fonts/ms_sans_serif.woff2';
 import ms_sans_serif_bold from 'react95/dist/fonts/ms_sans_serif_bold.woff2';
 
@@ -33,7 +34,7 @@ const GlobalStyles = createGlobalStyle`
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <GlobalStyles />
-    <ThemeProvider theme={original}>
+    <ThemeProvider theme={rose}>
       <App />
     </ThemeProvider>
   </StrictMode>,
