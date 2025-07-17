@@ -16,14 +16,12 @@ function WindowApp({
   onResizeStop,
   isMinimized,
 }) {
-  if (isMinimized) return null;
-
   return (
     <Rnd
       default={{ x: position.x, y: position.y, width: size.width, height: size.height }}
       position={{ x: position.x, y: position.y }}
       size={{ width: size.width, height: size.height }}
-      style={{ zIndex, position: 'absolute' }}
+      style={{ zIndex, position: 'absolute', display: isMinimized ? 'none' : undefined }}
       onDragStop={(e, d) => onDragStop(d.x, d.y)}
       onResizeStop={(e, direction, ref, delta, pos) =>
         onResizeStop(ref.offsetWidth, ref.offsetHeight, pos.x, pos.y)
