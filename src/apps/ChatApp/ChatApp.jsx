@@ -33,6 +33,9 @@ function ChatApp() {
   const [audioOutputs, setAudioOutputs] = useState([]);
   const [selectedInput, setSelectedInput] = useState('mic-default');
   const [selectedOutput, setSelectedOutput] = useState('spk-default');
+  // Track previous device selections for reconnect logic
+  const [prevInput, setPrevInput] = useState('mic-default');
+  const [prevOutput, setPrevOutput] = useState('spk-default');
 
   // --- WebRTC: Helper to add a peer connection ---
   const addPeerConnection = (userId, isInitiator) => {
@@ -86,8 +89,13 @@ function ChatApp() {
   // --- Join Call Handler ---
   const handleJoinCall = async () => {
     try {
-      // Get local media
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Get local media with selected input device
+      let constraints = { audio: true };
+      if (selectedInput && selectedInput !== 'mic-default') {
+        const deviceId = selectedInput.replace('mic-', '');
+        constraints = { audio: { deviceId: { exact: deviceId } } };
+      }
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       setLocalStream(stream);
       setInCall(true);
       if (socketRef.current) {
@@ -234,12 +242,35 @@ function ChatApp() {
     })();
   }, [settingsOpen]);
 
+  // --- Apply output device to audio elements ---
+  useEffect(() => {
+    if (selectedOutput && selectedOutput !== 'spk-default') {
+      const deviceId = selectedOutput.replace('spk-', '');
+      // Set sinkId for all remote audio elements
+      Object.entries(remoteStreams).forEach(([uid, stream]) => {
+        const audioEl = document.querySelector(`audio[data-uid="${uid}"]`);
+        if (audioEl && audioEl.sinkId !== deviceId && audioEl.setSinkId) {
+          audioEl.setSinkId(deviceId).catch(() => {});
+        }
+      });
+    }
+  }, [selectedOutput, remoteStreams]);
+
   const handleSettings = () => {
     setSettingsOpen(true);
   };
+  // --- Settings OK Handler ---
   const handleSettingsOk = () => {
     setSettingsOpen(false);
-    // TODO: Apply selectedInput/selectedOutput to WebRTC logic
+    // If device selection changed and in call, reconnect
+    if ((selectedInput !== prevInput || selectedOutput !== prevOutput) && inCall) {
+      handleLeaveCall();
+      setTimeout(() => {
+        handleJoinCall();
+      }, 500); // Give time for cleanup
+    }
+    setPrevInput(selectedInput);
+    setPrevOutput(selectedOutput);
   };
   const handleSettingsCancel = () => {
     setSettingsOpen(false);
@@ -398,7 +429,13 @@ function ChatApp() {
       )}
       {/* Render remote streams */}
       {Object.entries(remoteStreams).map(([uid, stream]) => (
-        <audio key={uid} autoPlay ref={el => { if (el) el.srcObject = stream; }} style={{ display: 'none' }} />
+        <audio
+          key={uid}
+          data-uid={uid}
+          autoPlay
+          ref={el => { if (el) el.srcObject = stream; }}
+          style={{ display: 'none' }}
+        />
       ))}
       {/* Settings Modal */}
       {settingsOpen && (
