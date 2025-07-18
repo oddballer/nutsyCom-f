@@ -416,7 +416,6 @@ function ChatApp() {
                     value="mic-default"
                     label="Default"
                     name="audio-input"
-                    variant="flat"
                   />
                   {audioInputs.map(d => (
                     <Radio
@@ -426,7 +425,6 @@ function ChatApp() {
                       value={`mic-${d.deviceId}`}
                       label={d.label || `Microphone (${d.deviceId})`}
                       name="audio-input"
-                      variant="flat"
                     />
                   ))}
                 </div>
@@ -441,7 +439,6 @@ function ChatApp() {
                     value="spk-default"
                     label="Default"
                     name="audio-output"
-                    variant="flat"
                   />
                   {audioOutputs.map(d => (
                     <Radio
@@ -451,7 +448,6 @@ function ChatApp() {
                       value={`spk-${d.deviceId}`}
                       label={d.label || `Speaker (${d.deviceId})`}
                       name="audio-output"
-                      variant="flat"
                     />
                   ))}
                 </div>
