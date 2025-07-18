@@ -89,6 +89,7 @@ function ChatApp() {
   // --- Join Call Handler ---
   const handleJoinCall = async () => {
     try {
+      console.log('Frontend: handleJoinCall called');
       // Get local media with selected input device
       let constraints = { audio: true };
       if (selectedInput && selectedInput !== 'mic-default') {
@@ -99,6 +100,7 @@ function ChatApp() {
       setLocalStream(stream);
       setInCall(true);
       if (socketRef.current) {
+        console.log(`Frontend: Emitting webrtc-join for room ${ROOM_ID}`);
         socketRef.current.emit('webrtc-join', ROOM_ID);
       }
       // Play join call sound
@@ -107,12 +109,14 @@ function ChatApp() {
         talkbegRef.current.play();
       }
     } catch (err) {
+      console.error('Frontend: Error joining call:', err);
       // handle error (mic denied, etc)
     }
   };
 
   // --- Leave Call Handler ---
   const handleLeaveCall = () => {
+    console.log('Frontend: handleLeaveCall called');
     // Play leave call sound
     if (talkendRef.current) {
       talkendRef.current.currentTime = 0;
@@ -130,6 +134,7 @@ function ChatApp() {
     setInCall(false);
     // setCallUsers([]); // Removed: let signaling events manage callUsers
     if (socketRef.current) {
+      console.log(`Frontend: Emitting webrtc-leave for room ${ROOM_ID}`);
       socketRef.current.emit('webrtc-leave', ROOM_ID);
     }
   };
@@ -137,58 +142,7 @@ function ChatApp() {
   // --- WebRTC signaling listeners ---
   useEffect(() => {
     if (!socketRef.current) return;
-    // User joined call
-    socketRef.current.on('webrtc-user-joined', ({ userId }) => {
-      if (userId === user.id) return;
-      setCallUsers(prev => prev.includes(userId) ? prev : [...prev, userId]);
-      // Initiate connection as the responder (not initiator)
-      addPeerConnection(userId, false);
-    });
-    // User left call
-    socketRef.current.on('webrtc-user-left', ({ userId }) => {
-      setCallUsers(prev => prev.filter(id => id !== userId));
-      if (peerConnections[userId]) {
-        peerConnections[userId].close();
-        setPeerConnections(prev => {
-          const copy = { ...prev };
-          delete copy[userId];
-          return copy;
-        });
-      }
-      setRemoteStreams(prev => {
-        const copy = { ...prev };
-        delete copy[userId];
-        return copy;
-      });
-    });
-    // WebRTC signaling
-    socketRef.current.on('webrtc-signal', async ({ fromUserId, signalData }) => {
-      let pc = peerConnections[fromUserId];
-      if (!pc) {
-        // If no connection, create as responder
-        addPeerConnection(fromUserId, false);
-        pc = peerConnections[fromUserId];
-      }
-      if (!pc) return;
-      if (signalData.type === 'offer') {
-        await pc.setRemoteDescription(new RTCSessionDescription(signalData.sdp));
-        const answer = await pc.createAnswer();
-        await pc.setLocalDescription(answer);
-        if (socketRef.current) {
-          socketRef.current.emit('webrtc-signal', {
-            roomId: ROOM_ID,
-            targetUserId: fromUserId,
-            signalData: { type: 'answer', sdp: answer }
-          });
-        }
-      } else if (signalData.type === 'answer') {
-        await pc.setRemoteDescription(new RTCSessionDescription(signalData.sdp));
-      } else if (signalData.type === 'ice-candidate' && signalData.candidate) {
-        try {
-          await pc.addIceCandidate(new RTCIceCandidate(signalData.candidate));
-        } catch (e) { /* ignore */ }
-      }
-    });
+    // This useEffect is now only for cleanup and re-initialization when dependencies change
     return () => {
       if (socketRef.current) {
         socketRef.current.off('webrtc-user-joined');
@@ -365,17 +319,85 @@ function ChatApp() {
 
     // Listen for online users
     socket.on('onlineUsers', (users) => {
+      console.log('Frontend: Received onlineUsers:', users);
       setOnlineUsers(users);
+    });
+
+    // --- WebRTC Signaling Listeners ---
+    // User joined call
+    socket.on('webrtc-user-joined', ({ userId }) => {
+      console.log(`Frontend: Received webrtc-user-joined for user ${userId}, current user: ${user.id}`);
+      if (userId === user.id) return;
+      setCallUsers(prev => {
+        const newCallUsers = prev.includes(userId) ? prev : [...prev, userId];
+        console.log(`Updated callUsers:`, newCallUsers);
+        return newCallUsers;
+      });
+      // Initiate connection as the responder (not initiator)
+      addPeerConnection(userId, false);
+    });
+    
+    // User left call
+    socket.on('webrtc-user-left', ({ userId }) => {
+      console.log(`Frontend: Received webrtc-user-left for user ${userId}`);
+      setCallUsers(prev => {
+        const newCallUsers = prev.filter(id => id !== userId);
+        console.log(`Updated callUsers after leave:`, newCallUsers);
+        return newCallUsers;
+      });
+      if (peerConnections[userId]) {
+        peerConnections[userId].close();
+        setPeerConnections(prev => {
+          const copy = { ...prev };
+          delete copy[userId];
+          return copy;
+        });
+      }
+      setRemoteStreams(prev => {
+        const copy = { ...prev };
+        delete copy[userId];
+        return copy;
+      });
+    });
+    
+    // WebRTC signaling
+    socket.on('webrtc-signal', async ({ fromUserId, signalData }) => {
+      let pc = peerConnections[fromUserId];
+      if (!pc) {
+        // If no connection, create as responder
+        addPeerConnection(fromUserId, false);
+        pc = peerConnections[fromUserId];
+      }
+      if (!pc) return;
+      if (signalData.type === 'offer') {
+        await pc.setRemoteDescription(new RTCSessionDescription(signalData.sdp));
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+        if (socketRef.current) {
+          socketRef.current.emit('webrtc-signal', {
+            roomId: ROOM_ID,
+            targetUserId: fromUserId,
+            signalData: { type: 'answer', sdp: answer }
+          });
+        }
+      } else if (signalData.type === 'answer') {
+        await pc.setRemoteDescription(new RTCSessionDescription(signalData.sdp));
+      } else if (signalData.type === 'ice-candidate' && signalData.candidate) {
+        try {
+          await pc.addIceCandidate(new RTCIceCandidate(signalData.candidate));
+        } catch (e) { /* ignore */ }
+      }
     });
 
     return () => {
       if (socketRef.current) {
         socketRef.current.off('webrtc-user-joined');
         socketRef.current.off('webrtc-user-left');
+        socketRef.current.off('webrtc-signal');
       }
       socket.disconnect();
     };
-  }, [user, token]);
+  }, [user, token, peerConnections, localStream]);
 
   useEffect(() => {
     // Scroll to bottom on new message
@@ -515,6 +537,7 @@ function ChatApp() {
               {onlineUsers.map(u => {
                 const isCurrentUser = u.id === user.id;
                 const isInCall = isCurrentUser ? inCall : callUsers.includes(u.id);
+                console.log(`Rendering user ${u.display_name}: isCurrentUser=${isCurrentUser}, isInCall=${isInCall}, callUsers=`, callUsers);
                 return (
                   <span key={u.id} style={{ display: 'block', padding: '2px 0', alignSelf: 'center', fontWeight: 'bold', fontSize: '12px', color: isCurrentUser ? 'blue' : 'red' }}>
                     {u.display_name} {isInCall && <span role="img" aria-label="In Call">📞</span>}
