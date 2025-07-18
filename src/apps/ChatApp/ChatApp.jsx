@@ -20,6 +20,20 @@ function ChatApp() {
   const imrcvRef = useRef(null);
   const imsendRef = useRef(null);
   const { user, token } = useAuth();
+  const [inCall, setInCall] = useState(false);
+
+  // Placeholder handlers for VOIP buttons
+  const handleJoinCall = () => {
+    setInCall(true);
+    // TODO: Implement WebRTC join logic
+  };
+  const handleLeaveCall = () => {
+    setInCall(false);
+    // TODO: Implement WebRTC leave logic
+  };
+  const handleSettings = () => {
+    // TODO: Open VOIP settings dialog
+  };
 
   useEffect(() => {
     if (!user || !token) {
@@ -184,6 +198,35 @@ function ChatApp() {
               ))}
             </div>
           </ScrollView>
+          {/* VOIP Button Row */}
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: 8, margin: '8px 0' }}>
+            <Button
+              size="sm"
+              onClick={handleJoinCall}
+              disabled={inCall}
+              style={{ minWidth: 36, minHeight: 36 }}
+              title="Join Call"
+            >
+              <span role="img" aria-label="Join Call">📞</span>
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleLeaveCall}
+              disabled={!inCall}
+              style={{ minWidth: 36, minHeight: 36 }}
+              title="Leave Call"
+            >
+              <span role="img" aria-label="Leave Call">❌</span>
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleSettings}
+              style={{ minWidth: 36, minHeight: 36 }}
+              title="Settings"
+            >
+              <span role="img" aria-label="Settings">⚙️</span>
+            </Button>
+          </div>
         </div>
         {/* Chat area */}
         <div style={{
