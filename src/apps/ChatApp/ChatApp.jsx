@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from '../../contexts/AuthContext';
-import { Button, TextInput, ScrollView, WindowContent, Window, WindowHeader, List, Fieldset, RadioGroup, RadioButton, Radio } from 'react95';
+import { Button, TextInput, ScrollView, WindowContent, Window, WindowHeader, GroupBox, Select } from 'react95';
 
 // Use environment variable for backend URL, fallback to localhost for development
 const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
@@ -407,51 +407,37 @@ function ChatApp() {
             <WindowHeader>Call Settings</WindowHeader>
             <WindowContent>
               {/* Audio Input Group */}
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ fontWeight: 'bold', marginBottom: 4 }}>Audio Input</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: 8, border: '1px solid #ccc', borderRadius: 4 }}>
-                  <Radio
-                    checked={selectedInput === 'mic-default'}
-                    onChange={e => setSelectedInput(e.target.value)}
-                    value="mic-default"
-                    label="Default"
-                    name="audio-input"
-                  />
-                  {audioInputs.map(d => (
-                    <Radio
-                      key={d.deviceId}
-                      checked={selectedInput === `mic-${d.deviceId}`}
-                      onChange={e => setSelectedInput(e.target.value)}
-                      value={`mic-${d.deviceId}`}
-                      label={d.label || `Microphone (${d.deviceId})`}
-                      name="audio-input"
-                    />
-                  ))}
-                </div>
-              </div>
+              <GroupBox label="Audio Input" style={{ marginBottom: 16 }}>
+                <Select
+                  options={[
+                    { value: 'mic-default', label: 'Default' },
+                    ...audioInputs.map(d => ({
+                      value: `mic-${d.deviceId}`,
+                      label: d.label || `Microphone (${d.deviceId})`
+                    }))
+                  ]}
+                  width={220}
+                  menuMaxHeight={160}
+                  value={selectedInput}
+                  onChange={value => setSelectedInput(value)}
+                />
+              </GroupBox>
               {/* Audio Output Group */}
-              <div style={{ marginBottom: 16 }}>
-                <div style={{ fontWeight: 'bold', marginBottom: 4 }}>Audio Output</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: 8, border: '1px solid #ccc', borderRadius: 4 }}>
-                  <Radio
-                    checked={selectedOutput === 'spk-default'}
-                    onChange={e => setSelectedOutput(e.target.value)}
-                    value="spk-default"
-                    label="Default"
-                    name="audio-output"
-                  />
-                  {audioOutputs.map(d => (
-                    <Radio
-                      key={d.deviceId}
-                      checked={selectedOutput === `spk-${d.deviceId}`}
-                      onChange={e => setSelectedOutput(e.target.value)}
-                      value={`spk-${d.deviceId}`}
-                      label={d.label || `Speaker (${d.deviceId})`}
-                      name="audio-output"
-                    />
-                  ))}
-                </div>
-              </div>
+              <GroupBox label="Audio Output" style={{ marginBottom: 16 }}>
+                <Select
+                  options={[
+                    { value: 'spk-default', label: 'Default' },
+                    ...audioOutputs.map(d => ({
+                      value: `spk-${d.deviceId}`,
+                      label: d.label || `Speaker (${d.deviceId})`
+                    }))
+                  ]}
+                  width={220}
+                  menuMaxHeight={160}
+                  value={selectedOutput}
+                  onChange={value => setSelectedOutput(value)}
+                />
+              </GroupBox>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 16 }}>
                 <Button onClick={handleSettingsOk}>OK</Button>
                 <Button onClick={handleSettingsCancel}>Cancel</Button>
