@@ -31,8 +31,8 @@ function ChatApp() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [audioInputs, setAudioInputs] = useState([]);
   const [audioOutputs, setAudioOutputs] = useState([]);
-  const [selectedInput, setSelectedInput] = useState('');
-  const [selectedOutput, setSelectedOutput] = useState('');
+  const [selectedInput, setSelectedInput] = useState('mic-default');
+  const [selectedOutput, setSelectedOutput] = useState('spk-default');
 
   // --- WebRTC: Helper to add a peer connection ---
   const addPeerConnection = (userId, isInitiator) => {
@@ -399,9 +399,9 @@ function ChatApp() {
               <Fieldset label="Audio Input">
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <Radio
-                    checked={selectedInput === ''}
-                    onChange={() => setSelectedInput('')}
-                    value=""
+                    checked={selectedInput === 'mic-default'}
+                    onChange={() => setSelectedInput('mic-default')}
+                    value="mic-default"
                     style={{ marginBottom: 2 }}
                   >
                     Default
@@ -409,9 +409,9 @@ function ChatApp() {
                   {audioInputs.map(d => (
                     <Radio
                       key={d.deviceId}
-                      checked={selectedInput === d.deviceId}
-                      onChange={() => setSelectedInput(d.deviceId)}
-                      value={d.deviceId}
+                      checked={selectedInput === `mic-${d.deviceId}`}
+                      onChange={() => setSelectedInput(`mic-${d.deviceId}`)}
+                      value={`mic-${d.deviceId}`}
                       style={{ marginBottom: 2 }}
                     >
                       {d.label || `Microphone (${d.deviceId})`}
@@ -422,9 +422,9 @@ function ChatApp() {
               <Fieldset label="Audio Output" style={{ marginTop: 12 }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                   <Radio
-                    checked={selectedOutput === ''}
-                    onChange={() => setSelectedOutput('')}
-                    value=""
+                    checked={selectedOutput === 'spk-default'}
+                    onChange={() => setSelectedOutput('spk-default')}
+                    value="spk-default"
                     style={{ marginBottom: 2 }}
                   >
                     Default
@@ -432,9 +432,9 @@ function ChatApp() {
                   {audioOutputs.map(d => (
                     <Radio
                       key={d.deviceId}
-                      checked={selectedOutput === d.deviceId}
-                      onChange={() => setSelectedOutput(d.deviceId)}
-                      value={d.deviceId}
+                      checked={selectedOutput === `spk-${d.deviceId}`}
+                      onChange={() => setSelectedOutput(`spk-${d.deviceId}`)}
+                      value={`spk-${d.deviceId}`}
                       style={{ marginBottom: 2 }}
                     >
                       {d.label || `Speaker (${d.deviceId})`}
