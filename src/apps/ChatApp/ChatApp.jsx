@@ -257,14 +257,18 @@ function ChatApp() {
     // Connection event handlers
     socket.on('connect', () => {
       console.log('Socket connected successfully!');
+      console.log('Socket ID:', socket.id);
       setConnectionStatus('Connected');
       // Authenticate the socket connection
+      console.log('Authenticating with token:', token ? 'Token exists' : 'No token');
       socket.emit('authenticate', token);
     });
 
     socket.on('authenticated', (data) => {
+      console.log('Socket authenticated successfully:', data);
       setConnectionStatus('Authenticated');
       // Join room after authentication
+      console.log('Joining room:', ROOM_ID);
       socket.emit('joinRoom', ROOM_ID);
     });
 
@@ -293,6 +297,7 @@ function ChatApp() {
     });
 
     socket.on('roomJoined', (data) => {
+      console.log('Successfully joined room:', data);
       setConnectionStatus('In chat room');
     });
 
@@ -347,13 +352,18 @@ function ChatApp() {
     // User joined call
     socket.on('webrtc-user-joined', ({ userId }) => {
       console.log(`Frontend: Received webrtc-user-joined for user ${userId}, current user: ${user.id}`);
-      if (userId === user.id) return;
+      console.log(`Current callUsers before update:`, callUsers);
+      if (userId === user.id) {
+        console.log('Ignoring own join event');
+        return;
+      }
       setCallUsers(prev => {
         const newCallUsers = prev.includes(userId) ? prev : [...prev, userId];
         console.log(`Updated callUsers:`, newCallUsers);
         return newCallUsers;
       });
       // Initiate connection as the responder (not initiator)
+      console.log(`Adding peer connection for user ${userId} as responder`);
       addPeerConnection(userId, false);
     });
     
