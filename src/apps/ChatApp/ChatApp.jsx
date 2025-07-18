@@ -36,6 +36,8 @@ function ChatApp() {
   // Track previous device selections for reconnect logic
   const [prevInput, setPrevInput] = useState('mic-default');
   const [prevOutput, setPrevOutput] = useState('spk-default');
+  // Queue for ICE candidates that arrive before remote description is set
+  const [iceCandidateQueue, setIceCandidateQueue] = useState({}); // userId -> [candidates]
 
   // --- WebRTC: Helper to add a peer connection ---
   const addPeerConnection = (userId, isInitiator) => {
@@ -174,6 +176,8 @@ function ChatApp() {
     Object.values(peerConnections).forEach(pc => pc.close());
     setPeerConnections({});
     setRemoteStreams({});
+    // Clear ICE candidate queue
+    setIceCandidateQueue({});
     // Stop local stream
     if (localStream) {
       localStream.getTracks().forEach(track => track.stop());
@@ -460,6 +464,12 @@ function ChatApp() {
         delete copy[userId];
         return copy;
       });
+      // Clear ICE candidate queue for this user
+      setIceCandidateQueue(prev => {
+        const copy = { ...prev };
+        delete copy[userId];
+        return copy;
+      });
     });
     
     // WebRTC signaling
@@ -482,6 +492,26 @@ function ChatApp() {
         if (signalData.type === 'offer') {
           console.log(`Processing offer from user ${fromUserId}`);
           await pc.setRemoteDescription(new RTCSessionDescription(signalData.sdp));
+          
+          // Process any queued ICE candidates
+          const queuedCandidates = iceCandidateQueue[fromUserId] || [];
+          if (queuedCandidates.length > 0) {
+            console.log(`Processing ${queuedCandidates.length} queued ICE candidates for user ${fromUserId}`);
+            for (const candidate of queuedCandidates) {
+              try {
+                await pc.addIceCandidate(new RTCIceCandidate(candidate));
+              } catch (e) {
+                console.error(`Error adding queued ICE candidate from user ${fromUserId}:`, e);
+              }
+            }
+            // Clear the queue
+            setIceCandidateQueue(prev => {
+              const newQueue = { ...prev };
+              delete newQueue[fromUserId];
+              return newQueue;
+            });
+          }
+          
           const answer = await pc.createAnswer();
           await pc.setLocalDescription(answer);
           console.log(`Sending answer to user ${fromUserId}:`, answer);
@@ -495,10 +525,39 @@ function ChatApp() {
         } else if (signalData.type === 'answer') {
           console.log(`Processing answer from user ${fromUserId}`);
           await pc.setRemoteDescription(new RTCSessionDescription(signalData.sdp));
+          
+          // Process any queued ICE candidates
+          const queuedCandidates = iceCandidateQueue[fromUserId] || [];
+          if (queuedCandidates.length > 0) {
+            console.log(`Processing ${queuedCandidates.length} queued ICE candidates for user ${fromUserId}`);
+            for (const candidate of queuedCandidates) {
+              try {
+                await pc.addIceCandidate(new RTCIceCandidate(candidate));
+              } catch (e) {
+                console.error(`Error adding queued ICE candidate from user ${fromUserId}:`, e);
+              }
+            }
+            // Clear the queue
+            setIceCandidateQueue(prev => {
+              const newQueue = { ...prev };
+              delete newQueue[fromUserId];
+              return newQueue;
+            });
+          }
         } else if (signalData.type === 'ice-candidate' && signalData.candidate) {
           console.log(`Processing ICE candidate from user ${fromUserId}`);
           try {
-            await pc.addIceCandidate(new RTCIceCandidate(signalData.candidate));
+            // Check if remote description is set
+            if (pc.remoteDescription && pc.remoteDescription.type) {
+              await pc.addIceCandidate(new RTCIceCandidate(signalData.candidate));
+            } else {
+              // Queue the candidate for later
+              console.log(`Queuing ICE candidate from user ${fromUserId} - no remote description yet`);
+              setIceCandidateQueue(prev => ({
+                ...prev,
+                [fromUserId]: [...(prev[fromUserId] || []), signalData.candidate]
+              }));
+            }
           } catch (e) { 
             console.error(`Error adding ICE candidate from user ${fromUserId}:`, e);
           }
