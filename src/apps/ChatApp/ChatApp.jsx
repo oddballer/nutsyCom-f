@@ -90,6 +90,12 @@ function ChatApp() {
   const handleJoinCall = async () => {
     try {
       console.log('Frontend: handleJoinCall called');
+      console.log('Current socket state:', {
+        socketRef: !!socketRef.current,
+        socketConnected: socketRef.current?.connected,
+        socketId: socketRef.current?.id,
+        connectionStatus
+      });
       // Get local media with selected input device
       let constraints = { audio: true };
       if (selectedInput && selectedInput !== 'mic-default') {
@@ -97,11 +103,15 @@ function ChatApp() {
         constraints = { audio: { deviceId: { exact: deviceId } } };
       }
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('Got local stream:', stream);
       setLocalStream(stream);
+      console.log('Setting inCall to true');
       setInCall(true);
       if (socketRef.current) {
         console.log(`Frontend: Emitting webrtc-join for room ${ROOM_ID}`);
         socketRef.current.emit('webrtc-join', ROOM_ID);
+      } else {
+        console.error('Frontend: socketRef.current is null!');
       }
       // Play join call sound
       if (talkbegRef.current) {
@@ -581,7 +591,10 @@ function ChatApp() {
             {!inCall && (
               <Button
                 size="sm"
-                onClick={handleJoinCall}
+                onClick={() => {
+                  console.log('Call button clicked!');
+                  handleJoinCall();
+                }}
                 style={{ minWidth: 36, minHeight: 36 }}
                 title="Join Call"
               >
@@ -591,7 +604,10 @@ function ChatApp() {
             {inCall && (
               <Button
                 size="sm"
-                onClick={handleLeaveCall}
+                onClick={() => {
+                  console.log('Leave call button clicked!');
+                  handleLeaveCall();
+                }}
                 style={{ minWidth: 36, minHeight: 36 }}
                 title="Leave Call"
               >
