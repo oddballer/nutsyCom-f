@@ -115,7 +115,7 @@ function ChatApp() {
       setLocalStream(null);
     }
     setInCall(false);
-    setCallUsers([]);
+    // setCallUsers([]); // Removed: let signaling events manage callUsers
     if (socketRef.current) {
       socketRef.current.emit('webrtc-leave', ROOM_ID);
     }
@@ -196,6 +196,19 @@ function ChatApp() {
       }
     });
   }, [inCall, onlineUsers, peerConnections, user.id, localStream]);
+
+  // Ensure localStream tracks are added to all peer connections
+  useEffect(() => {
+    if (!localStream) return;
+    Object.values(peerConnections).forEach(pc => {
+      localStream.getTracks().forEach(track => {
+        // Only add if not already added
+        if (!pc.getSenders().some(sender => sender.track && sender.track.id === track.id)) {
+          pc.addTrack(track, localStream);
+        }
+      });
+    });
+  }, [localStream, peerConnections]);
 
   // Placeholder handlers for VOIP buttons
   const handleSettings = () => {
