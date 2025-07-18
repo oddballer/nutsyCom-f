@@ -399,7 +399,6 @@ function ChatApp() {
                   <Radio
                     checked={selectedInput === ''}
                     onChange={() => setSelectedInput('')}
-                    name="audio-input"
                     value=""
                     style={{ marginBottom: 2 }}
                   >
@@ -410,7 +409,6 @@ function ChatApp() {
                       key={d.deviceId}
                       checked={selectedInput === d.deviceId}
                       onChange={() => setSelectedInput(d.deviceId)}
-                      name="audio-input"
                       value={d.deviceId}
                       style={{ marginBottom: 2 }}
                     >
@@ -424,7 +422,6 @@ function ChatApp() {
                   <Radio
                     checked={selectedOutput === ''}
                     onChange={() => setSelectedOutput('')}
-                    name="audio-output"
                     value=""
                     style={{ marginBottom: 2 }}
                   >
@@ -435,7 +432,6 @@ function ChatApp() {
                       key={d.deviceId}
                       checked={selectedOutput === d.deviceId}
                       onChange={() => setSelectedOutput(d.deviceId)}
-                      name="audio-output"
                       value={d.deviceId}
                       style={{ marginBottom: 2 }}
                     >
