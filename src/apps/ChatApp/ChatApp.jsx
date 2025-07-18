@@ -24,10 +24,16 @@ function ChatApp() {
 
   // Placeholder handlers for VOIP buttons
   const handleJoinCall = () => {
+    if (socketRef.current) {
+      socketRef.current.emit('webrtc-join', ROOM_ID);
+    }
     setInCall(true);
     // TODO: Implement WebRTC join logic
   };
   const handleLeaveCall = () => {
+    if (socketRef.current) {
+      socketRef.current.emit('webrtc-leave', ROOM_ID);
+    }
     setInCall(false);
     // TODO: Implement WebRTC leave logic
   };
@@ -124,7 +130,23 @@ function ChatApp() {
       setOnlineUsers(users);
     });
 
+    // --- WebRTC signaling listeners ---
+    if (socketRef.current) {
+      socketRef.current.on('webrtc-user-joined', ({ userId }) => {
+        // TODO: Handle new user joining call (e.g., create peer connection)
+        // console.log('User joined call:', userId);
+      });
+      socketRef.current.on('webrtc-user-left', ({ userId }) => {
+        // TODO: Handle user leaving call (e.g., remove peer connection)
+        // console.log('User left call:', userId);
+      });
+    }
+
     return () => {
+      if (socketRef.current) {
+        socketRef.current.off('webrtc-user-joined');
+        socketRef.current.off('webrtc-user-left');
+      }
       socket.disconnect();
     };
   }, [user, token]);
