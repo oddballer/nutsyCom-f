@@ -445,8 +445,8 @@ function ChatApp() {
                 </div>
               </Fieldset>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 16 }}>
-                <R95Button onClick={handleSettingsOk}>OK</R95Button>
-                <R95Button onClick={handleSettingsCancel}>Cancel</R95Button>
+                <Button onClick={handleSettingsOk}>OK</Button>
+                <Button onClick={handleSettingsCancel}>Cancel</Button>
               </div>
             </WindowContent>
           </Window>
