@@ -396,8 +396,10 @@ function ChatApp() {
           <Window style={{ minWidth: 320, maxWidth: 400 }}>
             <WindowHeader>Call Settings</WindowHeader>
             <WindowContent>
-              <Fieldset label="Audio Input">
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {/* Audio Input Group */}
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ fontWeight: 'bold', marginBottom: 4 }}>Audio Input</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: 8, border: '1px solid #ccc', borderRadius: 4 }}>
                   <Radio
                     checked={selectedInput === 'mic-default'}
                     onChange={e => setSelectedInput(e.target.value)}
@@ -418,9 +420,11 @@ function ChatApp() {
                     />
                   ))}
                 </div>
-              </Fieldset>
-              <Fieldset label="Audio Output" style={{ marginTop: 12 }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              </div>
+              {/* Audio Output Group */}
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ fontWeight: 'bold', marginBottom: 4 }}>Audio Output</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: 8, border: '1px solid #ccc', borderRadius: 4 }}>
                   <Radio
                     checked={selectedOutput === 'spk-default'}
                     onChange={e => setSelectedOutput(e.target.value)}
@@ -441,7 +445,7 @@ function ChatApp() {
                     />
                   ))}
                 </div>
-              </Fieldset>
+              </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 16 }}>
                 <Button onClick={handleSettingsOk}>OK</Button>
                 <Button onClick={handleSettingsCancel}>Cancel</Button>
