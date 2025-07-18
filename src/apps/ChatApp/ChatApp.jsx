@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from '../../contexts/AuthContext';
-import { Button, TextInput, ScrollView, WindowContent, Window, WindowHeader, List, Fieldset, RadioGroup, RadioButton } from 'react95';
+import { Button, TextInput, ScrollView, WindowContent, Window, WindowHeader, List, Fieldset, RadioGroup, RadioButton, Radio } from 'react95';
 
 // Use environment variable for backend URL, fallback to localhost for development
 const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
@@ -397,40 +397,50 @@ function ChatApp() {
             <WindowHeader>Call Settings</WindowHeader>
             <WindowContent>
               <Fieldset label="Audio Input">
-                <RadioGroup
-                  name="audio-input"
-                  value={selectedInput}
-                  onChange={e => setSelectedInput(e.target.value)}
-                  style={{ display: 'flex', flexDirection: 'column', gap: 4 }}
-                >
-                  <RadioButton value="mic-default" label="Default" style={{ marginBottom: 2 }} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <Radio
+                    checked={selectedInput === 'mic-default'}
+                    onChange={e => setSelectedInput(e.target.value)}
+                    value="mic-default"
+                    label="Default"
+                    name="audio-input"
+                    variant="flat"
+                  />
                   {audioInputs.map(d => (
-                    <RadioButton
+                    <Radio
                       key={d.deviceId}
+                      checked={selectedInput === `mic-${d.deviceId}`}
+                      onChange={e => setSelectedInput(e.target.value)}
                       value={`mic-${d.deviceId}`}
                       label={d.label || `Microphone (${d.deviceId})`}
-                      style={{ marginBottom: 2 }}
+                      name="audio-input"
+                      variant="flat"
                     />
                   ))}
-                </RadioGroup>
+                </div>
               </Fieldset>
               <Fieldset label="Audio Output" style={{ marginTop: 12 }}>
-                <RadioGroup
-                  name="audio-output"
-                  value={selectedOutput}
-                  onChange={e => setSelectedOutput(e.target.value)}
-                  style={{ display: 'flex', flexDirection: 'column', gap: 4 }}
-                >
-                  <RadioButton value="spk-default" label="Default" style={{ marginBottom: 2 }} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <Radio
+                    checked={selectedOutput === 'spk-default'}
+                    onChange={e => setSelectedOutput(e.target.value)}
+                    value="spk-default"
+                    label="Default"
+                    name="audio-output"
+                    variant="flat"
+                  />
                   {audioOutputs.map(d => (
-                    <RadioButton
+                    <Radio
                       key={d.deviceId}
+                      checked={selectedOutput === `spk-${d.deviceId}`}
+                      onChange={e => setSelectedOutput(e.target.value)}
                       value={`spk-${d.deviceId}`}
                       label={d.label || `Speaker (${d.deviceId})`}
-                      style={{ marginBottom: 2 }}
+                      name="audio-output"
+                      variant="flat"
                     />
                   ))}
-                </RadioGroup>
+                </div>
               </Fieldset>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 16 }}>
                 <Button onClick={handleSettingsOk}>OK</Button>
