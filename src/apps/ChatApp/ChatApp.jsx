@@ -39,19 +39,36 @@ function ChatApp() {
 
   // --- WebRTC: Helper to add a peer connection ---
   const addPeerConnection = (userId, isInitiator) => {
-    if (peerConnections[userId]) return; // Already connected
+    if (peerConnections[userId]) {
+      console.log(`Peer connection already exists for user ${userId}`);
+      return; // Already connected
+    }
+    
+    console.log(`Creating peer connection for user ${userId}, initiator: ${isInitiator}`);
+    
     const pc = new RTCPeerConnection({
       iceServers: [
         { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        { urls: 'stun:stun2.l.google.com:19302' },
       ]
     });
+    
     // Add local stream tracks
     if (localStream) {
-      localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+      console.log(`Adding ${localStream.getTracks().length} local tracks to peer connection`);
+      localStream.getTracks().forEach(track => {
+        console.log(`Adding track: ${track.kind}, enabled: ${track.enabled}`);
+        pc.addTrack(track, localStream);
+      });
+    } else {
+      console.warn('No local stream available when creating peer connection');
     }
+    
     // Handle ICE candidates
     pc.onicecandidate = (event) => {
       if (event.candidate && socketRef.current) {
+        console.log(`Sending ICE candidate to user ${userId}:`, event.candidate);
         socketRef.current.emit('webrtc-signal', {
           roomId: ROOM_ID,
           targetUserId: userId,
@@ -59,21 +76,36 @@ function ChatApp() {
         });
       }
     };
+    
+    // Handle connection state changes
+    pc.onconnectionstatechange = () => {
+      console.log(`Peer connection state for user ${userId}: ${pc.connectionState}`);
+    };
+    
+    pc.oniceconnectionstatechange = () => {
+      console.log(`ICE connection state for user ${userId}: ${pc.iceConnectionState}`);
+    };
+    
     // Handle remote stream
     pc.ontrack = (event) => {
+      console.log(`Received remote stream from user ${userId}:`, event.streams[0]);
       setRemoteStreams(prev => ({
         ...prev,
         [userId]: event.streams[0]
       }));
     };
+    
     // Store connection
     setPeerConnections(prev => ({ ...prev, [userId]: pc }));
+    
     // If initiator, create offer
     if (isInitiator) {
+      console.log(`Creating offer for user ${userId}`);
       pc.onnegotiationneeded = async () => {
         try {
           const offer = await pc.createOffer();
           await pc.setLocalDescription(offer);
+          console.log(`Sending offer to user ${userId}:`, offer);
           if (socketRef.current) {
             socketRef.current.emit('webrtc-signal', {
               roomId: ROOM_ID,
@@ -81,7 +113,9 @@ function ChatApp() {
               signalData: { type: 'offer', sdp: offer }
             });
           }
-        } catch (err) { /* handle error */ }
+        } catch (err) { 
+          console.error(`Error creating offer for user ${userId}:`, err);
+        }
       };
     }
   };
@@ -379,6 +413,13 @@ function ChatApp() {
       setOnlineUsers(users);
     });
 
+    // Listen for call started event (when first user joins)
+    socket.on('call-started', ({ roomId, callMembers }) => {
+      console.log('Frontend: Received call-started event:', { roomId, callMembers });
+      // Update callUsers with the current call members
+      setCallUsers(callMembers.filter(id => id !== user.id));
+    });
+
     // --- WebRTC Signaling Listeners ---
     // User joined call
     socket.on('webrtc-user-joined', ({ userId }) => {
@@ -423,30 +464,47 @@ function ChatApp() {
     
     // WebRTC signaling
     socket.on('webrtc-signal', async ({ fromUserId, signalData }) => {
+      console.log(`Frontend: Received webrtc-signal from user ${fromUserId}:`, signalData.type);
+      
       let pc = peerConnections[fromUserId];
       if (!pc) {
+        console.log(`No peer connection for user ${fromUserId}, creating as responder`);
         // If no connection, create as responder
         addPeerConnection(fromUserId, false);
         pc = peerConnections[fromUserId];
       }
-      if (!pc) return;
-      if (signalData.type === 'offer') {
-        await pc.setRemoteDescription(new RTCSessionDescription(signalData.sdp));
-        const answer = await pc.createAnswer();
-        await pc.setLocalDescription(answer);
-        if (socketRef.current) {
-          socketRef.current.emit('webrtc-signal', {
-            roomId: ROOM_ID,
-            targetUserId: fromUserId,
-            signalData: { type: 'answer', sdp: answer }
-          });
+      if (!pc) {
+        console.error(`Failed to create peer connection for user ${fromUserId}`);
+        return;
+      }
+      
+      try {
+        if (signalData.type === 'offer') {
+          console.log(`Processing offer from user ${fromUserId}`);
+          await pc.setRemoteDescription(new RTCSessionDescription(signalData.sdp));
+          const answer = await pc.createAnswer();
+          await pc.setLocalDescription(answer);
+          console.log(`Sending answer to user ${fromUserId}:`, answer);
+          if (socketRef.current) {
+            socketRef.current.emit('webrtc-signal', {
+              roomId: ROOM_ID,
+              targetUserId: fromUserId,
+              signalData: { type: 'answer', sdp: answer }
+            });
+          }
+        } else if (signalData.type === 'answer') {
+          console.log(`Processing answer from user ${fromUserId}`);
+          await pc.setRemoteDescription(new RTCSessionDescription(signalData.sdp));
+        } else if (signalData.type === 'ice-candidate' && signalData.candidate) {
+          console.log(`Processing ICE candidate from user ${fromUserId}`);
+          try {
+            await pc.addIceCandidate(new RTCIceCandidate(signalData.candidate));
+          } catch (e) { 
+            console.error(`Error adding ICE candidate from user ${fromUserId}:`, e);
+          }
         }
-      } else if (signalData.type === 'answer') {
-        await pc.setRemoteDescription(new RTCSessionDescription(signalData.sdp));
-      } else if (signalData.type === 'ice-candidate' && signalData.candidate) {
-        try {
-          await pc.addIceCandidate(new RTCIceCandidate(signalData.candidate));
-        } catch (e) { /* ignore */ }
+      } catch (error) {
+        console.error(`Error processing ${signalData.type} from user ${fromUserId}:`, error);
       }
     });
 
