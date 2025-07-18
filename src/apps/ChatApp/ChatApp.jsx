@@ -11,7 +11,7 @@ const ROOM_ID = 1; // General room
 
 function ChatApp() {
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
+  const [chatInput, setChatInput] = useState('');
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [connectionStatus, setConnectionStatus] = useState('Connecting...');
   const [authError, setAuthError] = useState('');
@@ -342,11 +342,11 @@ function ChatApp() {
 
   const sendMessage = (e) => {
     e.preventDefault();
-    if (!input.trim() || !user) return;
+    if (!chatInput.trim() || !user) return;
     try {
-      const msg = { roomId: ROOM_ID, content: input };
+      const msg = { roomId: ROOM_ID, content: chatInput };
       socketRef.current.emit('chatMessage', msg);
-      setInput('');
+      setChatInput('');
       if (imsendRef.current) {
         imsendRef.current.currentTime = 0;
         imsendRef.current.play();
@@ -540,8 +540,8 @@ function ChatApp() {
             marginTop: 8
           }}>
             <TextInput
-              value={input}
-              onChange={e => setInput(e.target.value)}
+              value={chatInput}
+              onChange={e => setChatInput(e.target.value)}
               style={{ flex: 1, minWidth: 0 }}
               placeholder="Type a message..."
               disabled={!user || connectionStatus !== 'In chat room'}
