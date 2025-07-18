@@ -15,8 +15,8 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
-  // Ensure BACKEND_URL doesn't have trailing slash
-  const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000').replace(/\/$/, '');
+  // Use environment variable for backend URL, fallback to Heroku for production
+  const BACKEND_URL = (import.meta.env.VITE_BACKEND_URL || 'https://nutsy-backend-197d2c7f6689.herokuapp.com').replace(/\/$/, '');
 
   // Check if user is authenticated on app load
   useEffect(() => {

@@ -3,8 +3,8 @@ import { io } from 'socket.io-client';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button, TextInput, ScrollView, WindowContent, Window, WindowHeader, GroupBox, Select } from 'react95';
 
-// Use environment variable for backend URL, fallback to localhost for development
-const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
+// Use environment variable for backend URL, fallback to Heroku for production
+const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'https://nutsy-backend-197d2c7f6689.herokuapp.com';
 // Ensure no trailing slash for proper URL construction
 const BACKEND_URL = SOCKET_URL.endsWith('/') ? SOCKET_URL.slice(0, -1) : SOCKET_URL;
 const ROOM_ID = 1; // General room
@@ -240,14 +240,23 @@ function ChatApp() {
     }
 
     // Connect to socket.io server
+    console.log('Attempting to connect to:', SOCKET_URL);
+    console.log('Current window location:', window.location.origin);
+    
     const socket = io(SOCKET_URL, {
-      transports: ['websocket', 'polling'],
-      timeout: 10000,
+      transports: ['polling', 'websocket'], // Try polling first, then websocket
+      timeout: 15000,
+      forceNew: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      withCredentials: false, // Disable credentials for cross-origin
     });
     socketRef.current = socket;
 
     // Connection event handlers
     socket.on('connect', () => {
+      console.log('Socket connected successfully!');
       setConnectionStatus('Connected');
       // Authenticate the socket connection
       socket.emit('authenticate', token);
@@ -265,7 +274,18 @@ function ChatApp() {
     });
 
     socket.on('connect_error', (error) => {
-      setConnectionStatus('Connection failed');
+      console.error('Socket connection error:', error);
+      setConnectionStatus(`Connection failed: ${error.message}`);
+    });
+
+    socket.on('reconnect_attempt', (attemptNumber) => {
+      console.log(`Socket reconnection attempt ${attemptNumber}`);
+      setConnectionStatus(`Reconnecting... (${attemptNumber})`);
+    });
+
+    socket.on('reconnect_failed', () => {
+      console.error('Socket reconnection failed');
+      setConnectionStatus('Reconnection failed');
     });
 
     socket.on('disconnect', () => {
