@@ -19,6 +19,8 @@ function ChatApp() {
   const messagesEndRef = useRef(null);
   const imrcvRef = useRef(null);
   const imsendRef = useRef(null);
+  const talkbegRef = useRef(null);
+  const talkendRef = useRef(null);
   const { user, token } = useAuth();
   const [inCall, setInCall] = useState(false);
   // WebRTC state
@@ -86,6 +88,11 @@ function ChatApp() {
       if (socketRef.current) {
         socketRef.current.emit('webrtc-join', ROOM_ID);
       }
+      // Play join call sound
+      if (talkbegRef.current) {
+        talkbegRef.current.currentTime = 0;
+        talkbegRef.current.play();
+      }
     } catch (err) {
       // handle error (mic denied, etc)
     }
@@ -93,6 +100,11 @@ function ChatApp() {
 
   // --- Leave Call Handler ---
   const handleLeaveCall = () => {
+    // Play leave call sound
+    if (talkendRef.current) {
+      talkendRef.current.currentTime = 0;
+      talkendRef.current.play();
+    }
     // Close all peer connections
     Object.values(peerConnections).forEach(pc => pc.close());
     setPeerConnections({});
@@ -333,6 +345,10 @@ function ChatApp() {
     <>
       <audio ref={imrcvRef} src="/imrcv.wav" preload="auto" />
       <audio ref={imsendRef} src="/imsend.wav" preload="auto" />
+      {/* Play on join call */}
+      <audio ref={talkbegRef} src="/talkbeg.wav" preload="auto" />
+      {/* Play on leave call */}
+      <audio ref={talkendRef} src="/talkend.wav" preload="auto" />
       {/* Render local stream audio (muted) */}
       {localStream && <audio autoPlay muted ref={el => { if (el) el.srcObject = localStream; }} style={{ display: 'none' }} />}
       {/* Render remote streams */}
@@ -369,24 +385,26 @@ function ChatApp() {
           </ScrollView>
           {/* VOIP Button Row */}
           <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: 8, margin: '8px 0' }}>
-            <Button
-              size="sm"
-              onClick={handleJoinCall}
-              disabled={inCall}
-              style={{ minWidth: 36, minHeight: 36 }}
-              title="Join Call"
-            >
-              <span role="img" aria-label="Join Call">📞</span>
-            </Button>
-            <Button
-              size="sm"
-              onClick={handleLeaveCall}
-              disabled={!inCall}
-              style={{ minWidth: 36, minHeight: 36 }}
-              title="Leave Call"
-            >
-              <span role="img" aria-label="Leave Call">❌</span>
-            </Button>
+            {!inCall && (
+              <Button
+                size="sm"
+                onClick={handleJoinCall}
+                style={{ minWidth: 36, minHeight: 36 }}
+                title="Join Call"
+              >
+                <span role="img" aria-label="Join Call">📞</span>
+              </Button>
+            )}
+            {inCall && (
+              <Button
+                size="sm"
+                onClick={handleLeaveCall}
+                style={{ minWidth: 36, minHeight: 36 }}
+                title="Leave Call"
+              >
+                <span role="img" aria-label="Leave Call">❌</span>
+              </Button>
+            )}
             <Button
               size="sm"
               onClick={handleSettings}
