@@ -383,7 +383,9 @@ function ChatApp() {
       {/* Play on leave call */}
       <audio ref={talkendRef} src="/talkend.wav" preload="auto" />
       {/* Render local stream audio (muted) */}
-      {localStream && <audio autoPlay muted ref={el => { if (el) el.srcObject = localStream; }} style={{ display: 'none' }} />}
+      {localStream && (
+        <audio autoPlay muted ref={el => { if (el) el.srcObject = localStream; }} style={{ display: 'none' }} />
+      )}
       {/* Render remote streams */}
       {Object.entries(remoteStreams).map(([uid, stream]) => (
         <audio key={uid} autoPlay ref={el => { if (el) el.srcObject = stream; }} style={{ display: 'none' }} />
