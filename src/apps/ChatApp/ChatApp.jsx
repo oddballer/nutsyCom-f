@@ -218,10 +218,20 @@ function ChatApp() {
   // Fetch device list when modal opens
   useEffect(() => {
     if (!settingsOpen) return;
-    navigator.mediaDevices.enumerateDevices().then(devices => {
+    let tempStream = null;
+    (async () => {
+      try {
+        tempStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (e) {
+        // User denied or no mic, still try to enumerate
+      }
+      const devices = await navigator.mediaDevices.enumerateDevices();
       setAudioInputs(devices.filter(d => d.kind === 'audioinput'));
       setAudioOutputs(devices.filter(d => d.kind === 'audiooutput'));
-    });
+      if (tempStream) {
+        tempStream.getTracks().forEach(track => track.stop());
+      }
+    })();
   }, [settingsOpen]);
 
   const handleSettings = () => {
