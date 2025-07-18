@@ -356,11 +356,15 @@ function ChatApp() {
           </div>
           <ScrollView style={{ flex: 1, minHeight: 0, background: '#ffffff', border: 'none', padding: 0, margin: 0 }}>
             <div style={{ textAlign: 'center' }}>
-              {onlineUsers.map(u => (
-                <span key={u.id} style={{ display: 'block', padding: '2px 0', alignSelf: 'center', fontWeight: 'bold', fontSize: '12px', color: u.id === user.id ? 'blue' : 'red' }}>
-                  {u.display_name}
-                </span>
-              ))}
+              {onlineUsers.map(u => {
+                const isCurrentUser = u.id === user.id;
+                const isInCall = isCurrentUser ? inCall : callUsers.includes(u.id);
+                return (
+                  <span key={u.id} style={{ display: 'block', padding: '2px 0', alignSelf: 'center', fontWeight: 'bold', fontSize: '12px', color: isCurrentUser ? 'blue' : 'red' }}>
+                    {u.display_name} {isInCall && <span role="img" aria-label="In Call">📞</span>}
+                  </span>
+                );
+              })}
             </div>
           </ScrollView>
           {/* VOIP Button Row */}
