@@ -402,7 +402,7 @@ function ChatApp() {
       ))}
       {/* Settings Modal */}
       {settingsOpen && (
-        <div style={{ position: 'fixed', left: 0, top: 0, width: '100vw', height: '100vh', zIndex: 1000, background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Window style={{ minWidth: 320, maxWidth: 400 }}>
             <WindowHeader>Call Settings</WindowHeader>
             <WindowContent>
