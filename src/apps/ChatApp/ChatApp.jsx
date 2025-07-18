@@ -262,6 +262,9 @@ function ChatApp() {
   // --- Settings OK Handler ---
   const handleSettingsOk = () => {
     setSettingsOpen(false);
+    // Save to localStorage
+    localStorage.setItem('voiceInputDevice', selectedInput);
+    localStorage.setItem('voiceOutputDevice', selectedOutput);
     // If device selection changed and in call, reconnect
     if ((selectedInput !== prevInput || selectedOutput !== prevOutput) && inCall) {
       handleLeaveCall();
@@ -380,6 +383,15 @@ function ChatApp() {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
+
+  useEffect(() => {
+    const savedInput = localStorage.getItem('voiceInputDevice');
+    const savedOutput = localStorage.getItem('voiceOutputDevice');
+    if (savedInput) setSelectedInput(savedInput);
+    if (savedOutput) setSelectedOutput(savedOutput);
+    setPrevInput(savedInput || 'mic-default');
+    setPrevOutput(savedOutput || 'spk-default');
+  }, []);
 
   const sendMessage = (e) => {
     e.preventDefault();
