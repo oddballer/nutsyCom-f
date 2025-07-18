@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from '../../contexts/AuthContext';
-import { Button, TextInput, ScrollView, WindowContent } from 'react95';
+import { Button, TextInput, ScrollView, WindowContent, Window, WindowHeader, List, Fieldset, Radio } from 'react95';
 
 // Use environment variable for backend URL, fallback to localhost for development
 const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
@@ -28,6 +28,11 @@ function ChatApp() {
   const [peerConnections, setPeerConnections] = useState({}); // userId -> RTCPeerConnection
   const [remoteStreams, setRemoteStreams] = useState({}); // userId -> MediaStream
   const [localStream, setLocalStream] = useState(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [audioInputs, setAudioInputs] = useState([]);
+  const [audioOutputs, setAudioOutputs] = useState([]);
+  const [selectedInput, setSelectedInput] = useState('');
+  const [selectedOutput, setSelectedOutput] = useState('');
 
   // --- WebRTC: Helper to add a peer connection ---
   const addPeerConnection = (userId, isInitiator) => {
@@ -210,9 +215,24 @@ function ChatApp() {
     });
   }, [localStream, peerConnections]);
 
-  // Placeholder handlers for VOIP buttons
+  // Fetch device list when modal opens
+  useEffect(() => {
+    if (!settingsOpen) return;
+    navigator.mediaDevices.enumerateDevices().then(devices => {
+      setAudioInputs(devices.filter(d => d.kind === 'audioinput'));
+      setAudioOutputs(devices.filter(d => d.kind === 'audiooutput'));
+    });
+  }, [settingsOpen]);
+
   const handleSettings = () => {
-    // TODO: Open VOIP settings dialog
+    setSettingsOpen(true);
+  };
+  const handleSettingsOk = () => {
+    setSettingsOpen(false);
+    // TODO: Apply selectedInput/selectedOutput to WebRTC logic
+  };
+  const handleSettingsCancel = () => {
+    setSettingsOpen(false);
   };
 
   useEffect(() => {
@@ -368,6 +388,70 @@ function ChatApp() {
       {Object.entries(remoteStreams).map(([uid, stream]) => (
         <audio key={uid} autoPlay ref={el => { if (el) el.srcObject = stream; }} style={{ display: 'none' }} />
       ))}
+      {/* Settings Modal */}
+      {settingsOpen && (
+        <div style={{ position: 'fixed', left: 0, top: 0, width: '100vw', height: '100vh', zIndex: 1000, background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Window style={{ minWidth: 320, maxWidth: 400 }}>
+            <WindowHeader>Call Settings</WindowHeader>
+            <WindowContent>
+              <Fieldset label="Audio Input">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <Radio
+                    checked={selectedInput === ''}
+                    onChange={() => setSelectedInput('')}
+                    name="audio-input"
+                    value=""
+                    style={{ marginBottom: 2 }}
+                  >
+                    Default
+                  </Radio>
+                  {audioInputs.map(d => (
+                    <Radio
+                      key={d.deviceId}
+                      checked={selectedInput === d.deviceId}
+                      onChange={() => setSelectedInput(d.deviceId)}
+                      name="audio-input"
+                      value={d.deviceId}
+                      style={{ marginBottom: 2 }}
+                    >
+                      {d.label || `Microphone (${d.deviceId})`}
+                    </Radio>
+                  ))}
+                </div>
+              </Fieldset>
+              <Fieldset label="Audio Output" style={{ marginTop: 12 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <Radio
+                    checked={selectedOutput === ''}
+                    onChange={() => setSelectedOutput('')}
+                    name="audio-output"
+                    value=""
+                    style={{ marginBottom: 2 }}
+                  >
+                    Default
+                  </Radio>
+                  {audioOutputs.map(d => (
+                    <Radio
+                      key={d.deviceId}
+                      checked={selectedOutput === d.deviceId}
+                      onChange={() => setSelectedOutput(d.deviceId)}
+                      name="audio-output"
+                      value={d.deviceId}
+                      style={{ marginBottom: 2 }}
+                    >
+                      {d.label || `Speaker (${d.deviceId})`}
+                    </Radio>
+                  ))}
+                </div>
+              </Fieldset>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 16 }}>
+                <R95Button onClick={handleSettingsOk}>OK</R95Button>
+                <R95Button onClick={handleSettingsCancel}>Cancel</R95Button>
+              </div>
+            </WindowContent>
+          </Window>
+        </div>
+      )}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden', width: '100%', height: '100%' }}>
         {/* Online users sidebar */}
         <div style={{
