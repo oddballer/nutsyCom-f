@@ -91,6 +91,8 @@ function ChatApp() {
     // Handle remote stream
     pc.ontrack = (event) => {
       console.log(`Received remote stream from user ${userId}:`, event.streams[0]);
+      console.log(`Track details:`, event.track);
+      console.log(`Stream tracks:`, event.streams[0].getTracks());
       setRemoteStreams(prev => ({
         ...prev,
         [userId]: event.streams[0]
@@ -102,8 +104,9 @@ function ChatApp() {
     
     // If initiator, create offer
     if (isInitiator) {
-      console.log(`Creating offer for user ${userId}`);
+      console.log(`Setting up negotiation needed handler for user ${userId}`);
       pc.onnegotiationneeded = async () => {
+        console.log(`Negotiation needed for user ${userId}`);
         try {
           const offer = await pc.createOffer();
           await pc.setLocalDescription(offer);
@@ -119,6 +122,16 @@ function ChatApp() {
           console.error(`Error creating offer for user ${userId}:`, err);
         }
       };
+      
+      // Trigger negotiation if we already have tracks
+      if (localStream && localStream.getTracks().length > 0) {
+        console.log(`Triggering negotiation for user ${userId} (has tracks)`);
+        setTimeout(() => {
+          if (pc.connectionState !== 'closed') {
+            pc.onnegotiationneeded();
+          }
+        }, 100);
+      }
     }
   };
 
@@ -207,10 +220,12 @@ function ChatApp() {
   // --- When inCall, announce to others and connect to existing users ---
   useEffect(() => {
     if (!inCall || !socketRef.current) return;
+    console.log('inCall effect triggered, connecting to existing users:', onlineUsers);
     // On join, ask backend for current call users (not implemented yet, so rely on join/leave events)
     // For now, connect to all users in onlineUsers except self
     onlineUsers.forEach(u => {
       if (u.id !== user.id && !peerConnections[u.id]) {
+        console.log(`Creating peer connection to existing user ${u.username} (${u.id}) as initiator`);
         addPeerConnection(u.id, true); // Initiator for existing users
       }
     });
@@ -640,15 +655,26 @@ function ChatApp() {
         <audio autoPlay muted ref={el => { if (el) el.srcObject = localStream; }} style={{ display: 'none' }} />
       )}
       {/* Render remote streams */}
-      {Object.entries(remoteStreams).map(([uid, stream]) => (
-        <audio
-          key={uid}
-          data-uid={uid}
-          autoPlay
-          ref={el => { if (el) el.srcObject = stream; }}
-          style={{ display: 'none' }}
-        />
-      ))}
+      {Object.entries(remoteStreams).map(([uid, stream]) => {
+        console.log(`Rendering audio element for user ${uid} with stream:`, stream);
+        return (
+          <audio
+            key={uid}
+            data-uid={uid}
+            autoPlay
+            ref={el => { 
+              if (el) {
+                console.log(`Setting srcObject for user ${uid}`);
+                el.srcObject = stream;
+                el.onloadedmetadata = () => console.log(`Audio metadata loaded for user ${uid}`);
+                el.oncanplay = () => console.log(`Audio can play for user ${uid}`);
+                el.onerror = (e) => console.error(`Audio error for user ${uid}:`, e);
+              }
+            }}
+            style={{ display: 'none' }}
+          />
+        );
+      })}
       {/* Settings Modal */}
       {settingsOpen && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
