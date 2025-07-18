@@ -456,7 +456,7 @@ function ChatApp() {
                   width={220}
                   menuMaxHeight={160}
                   value={selectedInput}
-                  onChange={value => setSelectedInput(value)}
+                  onChange={option => setSelectedInput(option.value)}
                 />
               </GroupBox>
               {/* Audio Output Group */}
@@ -472,7 +472,7 @@ function ChatApp() {
                   width={220}
                   menuMaxHeight={160}
                   value={selectedOutput}
-                  onChange={value => setSelectedOutput(value)}
+                  onChange={option => setSelectedOutput(option.value)}
                 />
               </GroupBox>
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 16 }}>
