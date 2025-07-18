@@ -107,11 +107,15 @@ function ChatApp() {
       setLocalStream(stream);
       console.log('Setting inCall to true');
       setInCall(true);
-      if (socketRef.current) {
-        console.log(`Frontend: Emitting webrtc-join for room ${ROOM_ID}`);
+      if (socketRef.current && socketRef.current.connected) {
+        console.log(`Frontend: Emitting webrtc-join for room ${ROOM_ID} on socket ${socketRef.current.id}`);
         socketRef.current.emit('webrtc-join', ROOM_ID);
       } else {
-        console.error('Frontend: socketRef.current is null!');
+        console.error('Frontend: socketRef.current is null or not connected!', {
+          socketRef: !!socketRef.current,
+          connected: socketRef.current?.connected,
+          socketId: socketRef.current?.id
+        });
       }
       // Play join call sound
       if (talkbegRef.current) {
@@ -173,6 +177,14 @@ function ChatApp() {
       }
     });
   }, [inCall, onlineUsers, peerConnections, user.id, localStream]);
+
+  // --- Rejoin call if socket reconnects while in call ---
+  useEffect(() => {
+    if (inCall && socketRef.current && socketRef.current.connected && connectionStatus === 'In chat room') {
+      console.log('User is in call and socket is connected, ensuring call membership');
+      socketRef.current.emit('webrtc-join', ROOM_ID);
+    }
+  }, [inCall, connectionStatus]);
 
   // Ensure localStream tracks are added to all peer connections
   useEffect(() => {
@@ -256,7 +268,6 @@ function ChatApp() {
     const socket = io(SOCKET_URL, {
       transports: ['polling', 'websocket'], // Try polling first, then websocket
       timeout: 15000,
-      forceNew: true,
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
@@ -300,6 +311,16 @@ function ChatApp() {
     socket.on('reconnect_failed', () => {
       console.error('Socket reconnection failed');
       setConnectionStatus('Reconnection failed');
+    });
+
+    socket.on('reconnect', (attemptNumber) => {
+      console.log(`Socket reconnected on attempt ${attemptNumber}`);
+      setConnectionStatus('Reconnected');
+      // If user was in call, rejoin the call
+      if (inCall && socketRef.current) {
+        console.log('Rejoining call after reconnection');
+        socketRef.current.emit('webrtc-join', ROOM_ID);
+      }
     });
 
     socket.on('disconnect', () => {
